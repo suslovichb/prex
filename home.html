@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Prex Home Page</title>
+        <link href="./bootstrap.min.css" rel="stylesheet">
+        <script src="./bootstrap.min.js"></script>
+    </head>
+
+    <body>
+        <div>
+            <h1>Prex Home Page</h1>
+        </div>
+
+        <div>
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="settings-tab" data-bs-toggle="tab" 
+                            data-bs-target="#settings" type="button" role="tab" 
+                            aria-controls="settings" aria-selected="true">
+                        Settings
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="reporting-tab" data-bs-toggle="tab" 
+                            data-bs-target="#reporting" type="button" role="tab" 
+                            aria-controls="reporting" aria-selected="false">
+                        Reporting
+                    </button>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+                    Settings stuff
+                </div>
+                <div class="tab-pane fade" id="reporting" role="tabpanel" aria-labelledby="reporting-tab">
+                    Reporting stuff
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>
