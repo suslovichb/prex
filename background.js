@@ -37,4 +37,4 @@ const loadPullRequests = () => {
 }
 
 
-loadPullRequests();
+
