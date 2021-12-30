@@ -1,18 +1,31 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Prex</title>
-        <link rel="stylesheet" href="popup.css">
-    </head>
-    <body>
-        <div style="padding:10px;">
-            <div>
-                <button type="button" id="home-btn">
-                    <b>HOME</b>
-                </button>
-                                
-            </div>
-        </div>
-        <script src="popup.js" type="text/javascript"></script>
-    </body>
+<head>
+    <title>Prex</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+<div style="padding:10px;">
+    <div>
+        <button type="button" id="home-btn">
+            <b>HOME</b>
+        </button>
+    </div>
+    <div>
+        <button type="button" id="report-btn">
+            <b>REPORT</b>
+        </button>
+    </div>
+
+    <form class="d-flex">
+        <input class="form-control me-sm-2" type="text" id="TokenFieldId" placeholder="Token"></form>
+
+    <div>
+        <button type="button" id="token-btn">
+            <b>Generate new token</b>
+        </button>
+    </div>
+</div>
+<script src="popup.js" type="text/javascript"></script>
+</body>
 </html>
