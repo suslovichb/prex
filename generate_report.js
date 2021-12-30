@@ -1,7 +1,7 @@
 $(document).ready(function () {
     chrome.runtime.sendMessage({Ready: 'True'});
     chrome.runtime.onMessage.addListener(
-        function (request, sender,sendResponse) {
+        function (request, sender, sendResponse) {
             let accessToken = request.Token;
             loadPullRequests(accessToken);
         }
@@ -11,22 +11,23 @@ $(document).ready(function () {
 const query = `query {\
     viewer {\
       pullRequests(first: 100, states: OPEN) {\
-        totalCount\
         nodes {\
           createdAt\
           number\
           title\
+          author {\
+          login\
         }\
-        pageInfo {\
-          hasNextPage\
-          endCursor\
+        updatedAt\
+        url\
         }\
+        totalCount\
       }\
     }\
   }`;
 
 
-function loadPullRequests(accessToken){
+function loadPullRequests(accessToken) {
     const options = {
         method: "post",
         headers: {
@@ -39,6 +40,44 @@ function loadPullRequests(accessToken){
     };
     fetch(`https://api.github.com/graphql`, options)
         .then(response => response.json())
-        .then(data => console.log(data))
+        .then(data => generateTable(data['data']['viewer']['pullRequests']['nodes']))
         .catch(error => console.log(error));
 }
+
+
+function generateTable(data) {
+    console.log(data);
+    let dataKey = ['createdAt', 'title', 'author', 'updatedAt', 'url', 'pending days'];
+    let table = "<table>";
+    table += "<thead><tr>";
+    for (let key in dataKey) {
+        table += "<th>" + dataKey[key] + "</th>";
+    }
+    table += "</tr></thead>";
+
+    table += "<tbody>";
+    for (let i = 0; i < data.length; i++) {
+        table += '<tr class="table-light" id="' + data[i]['url'] + '">';
+        for (let j in dataKey) {
+            if (dataKey[j] === 'author') {
+                table += "<td>" + data[i][dataKey[j]]['login'] + "</td>";
+            } else if (dataKey[j] === 'url') {
+                table += '<td><a href="' + data[i][dataKey[j]] + '">' + data[i][dataKey[j]] + '</a></td>';
+            } else if (dataKey[j] === 'pending days') {
+                console.log((Date(data[i]['createdAt']).getTime));
+                table += "<td>" + Math.trunc((Date.now() - Date.parse(data[i]['createdAt'])) / (1000 * 3600 * 24)) + "</td>";
+            } else {
+                table += "<td>" + data[i][dataKey[j]] + "</td>";
+            }
+        }
+        table += "</tr>";
+    }
+
+    table += "</tbody></table>";
+
+    document.getElementById("table").innerHTML = table;
+}
+
+
+
+
