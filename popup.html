@@ -5,27 +5,35 @@
     <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-<div style="padding:10px;">
-    <div>
-        <button type="button" id="home-btn">
+<div style="padding:10px; width: 200px;">
+    <div class="outer">
+        <button type="button" id="home-btn" class="btn">
             <b>HOME</b>
         </button>
     </div>
-    <div>
-        <button type="button" id="report-btn">
+    <div class="outer">
+        <button type="button" id="report-btn" class="btn">
             <b>REPORT</b>
         </button>
     </div>
 
-    <form class="d-flex">
-        <input class="form-control me-sm-2" type="text" id="TokenFieldId" placeholder="Token"></form>
+    <div class="outer">
+        <form class="d-flex">
+            <input class="form-control me-sm-2" type="text" id="TokenFieldId" placeholder="Token"></form>
+    </div>
 
-    <div>
-        <button type="button" id="token-btn">
+    <div class="outer">
+        <button type="button" id="token-gen-btn" class="btn">
             <b>Generate new token</b>
         </button>
     </div>
+    <div class="outer">
+        <button type="button" id="tokens-btn" class="btn">
+            <b>View tokens</b>
+        </button>
+    </div>
 </div>
+<script type="text/javascript" src="jquery-3.6.0.min.js"></script>
 <script src="popup.js" type="text/javascript"></script>
 </body>
 </html>

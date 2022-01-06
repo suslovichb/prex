@@ -1,18 +1,11 @@
-#home-btn {
+.btn {
     background-color: black;
     color: white;
     border: none;
     padding: 8px;
+    margin-top: 5px;
+    margin-left: 5px;
 }
-#report-btn {
-    background-color: black;
-    color: white;
-    border: none;
-    padding: 8px;
-}
-#token-btn {
-    background-color: black;
-    color: white;
-    border: none;
-    padding: 8px;
+.outer{
+        position: relative;
 }
