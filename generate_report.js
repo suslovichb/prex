@@ -27,6 +27,8 @@ const query = `query {\
   }`;
 
 
+
+
 function loadPullRequests(accessToken) {
     const options = {
         method: "post",
@@ -64,8 +66,7 @@ function generateTable(data) {
             } else if (dataKey[j] === 'url') {
                 table += '<td><a href="' + data[i][dataKey[j]] + '">' + data[i][dataKey[j]] + '</a></td>';
             } else if (dataKey[j] === 'pending days') {
-                console.log((Date(data[i]['createdAt']).getTime));
-                table += "<td>" + Math.trunc((Date.now() - Date.parse(data[i]['createdAt'])) / (1000 * 3600 * 24)) + "</td>";
+                table += "<td>" + Math.trunc((Date.now() - Date.parse(data[i]['updatedAt'])) / (1000 * 3600 * 24)) + "</td>";
             } else {
                 table += "<td>" + data[i][dataKey[j]] + "</td>";
             }
