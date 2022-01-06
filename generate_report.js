@@ -1,11 +1,16 @@
 $(document).ready(function () {
     chrome.runtime.sendMessage({Ready: 'True'});
-    chrome.runtime.onMessage.addListener(
-        function (request, sender, sendResponse) {
-            let accessToken = request.Token;
-            loadPullRequests(accessToken);
-        }
-    )
+    let accessToken = localStorage.getItem('accessToken');
+    if (accessToken) {
+        loadPullRequests(accessToken);
+    } else {
+        chrome.runtime.onMessage.addListener(
+            function (request, sender, sendResponse) {
+                accessToken = request.Token;
+                loadPullRequests(accessToken);
+            }
+        )
+    }
 });
 
 const query = `query {\
@@ -27,8 +32,6 @@ const query = `query {\
   }`;
 
 
-
-
 function loadPullRequests(accessToken) {
     const options = {
         method: "post",
@@ -48,7 +51,6 @@ function loadPullRequests(accessToken) {
 
 
 function generateTable(data) {
-    console.log(data);
     let dataKey = ['createdAt', 'title', 'author', 'updatedAt', 'url', 'pending days'];
     let table = "<table>";
     table += "<thead><tr>";
@@ -73,7 +75,6 @@ function generateTable(data) {
         }
         table += "</tr>";
     }
-
     table += "</tbody></table>";
 
     document.getElementById("table").innerHTML = table;
