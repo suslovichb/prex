@@ -1,11 +1,16 @@
 $(document).ready(function () {
     chrome.runtime.sendMessage({Ready: 'True'});
-    chrome.runtime.onMessage.addListener(
-        function (request, sender, sendResponse) {
-            let accessToken = request.Token;
-            loadPullRequests(accessToken);
-        }
-    )
+    let accessToken = localStorage.getItem('accessToken');
+    if (accessToken) {
+        loadPullRequests(accessToken);
+    } else {
+        chrome.runtime.onMessage.addListener(
+            function (request, sender, sendResponse) {
+                accessToken = request.Token;
+                loadPullRequests(accessToken);
+            }
+        )
+    }
 });
 
 const query = `query {\
@@ -46,7 +51,6 @@ function loadPullRequests(accessToken) {
 
 
 function generateTable(data) {
-    console.log(data);
     let dataKey = ['createdAt', 'title', 'author', 'updatedAt', 'url', 'pending days'];
     let table = "<table>";
     table += "<thead><tr>";
@@ -64,15 +68,13 @@ function generateTable(data) {
             } else if (dataKey[j] === 'url') {
                 table += '<td><a href="' + data[i][dataKey[j]] + '">' + data[i][dataKey[j]] + '</a></td>';
             } else if (dataKey[j] === 'pending days') {
-                console.log((Date(data[i]['createdAt']).getTime));
-                table += "<td>" + Math.trunc((Date.now() - Date.parse(data[i]['createdAt'])) / (1000 * 3600 * 24)) + "</td>";
+                table += "<td>" + Math.trunc((Date.now() - Date.parse(data[i]['updatedAt'])) / (1000 * 3600 * 24)) + "</td>";
             } else {
                 table += "<td>" + data[i][dataKey[j]] + "</td>";
             }
         }
         table += "</tr>";
     }
-
     table += "</tbody></table>";
 
     document.getElementById("table").innerHTML = table;
