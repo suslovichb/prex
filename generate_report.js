@@ -64,11 +64,10 @@ let options = {};
 
 async function loadPullRequests(data) {
     let repos = localStorage.getItem('repos');
-    repos=['Dp-217_Python',];
     let requested_repositories = [];
     if (repos) {
-        for (let repos_i=0; repos_i< repos.length; repos_i++) {
-            for (let data_i=0; data_i< data.length; data_i++) {
+        for (let repos_i = 0; repos_i < repos.length; repos_i++) {
+            for (let data_i = 0; data_i < data.length; data_i++) {
                 let name_external = data[data_i]['nameWithOwner'].split('/')[1];
                 if (name_external === repos[repos_i]) {
                     requested_repositories.push(data[data_i]['nameWithOwner']);
@@ -76,38 +75,44 @@ async function loadPullRequests(data) {
             }
         }
     } else {
-        for (let i=0; i< data.length; i++) {
+        for (let i = 0; i < data.length; i++) {
             requested_repositories.push(data[i]['nameWithOwner']);
         }
     }
     let pullRequests = [];
-    for (let i=0; i< requested_repositories.length; i++) {
+    for (let i = 0; i < requested_repositories.length; i++) {
         let query = queryGetPullRequests[0] + requested_repositories[i] + queryGetPullRequests[1];
         options['body'] = JSON.stringify({"query": query});
-        fetch(`https://api.github.com/graphql`, options)
+        await fetch(`https://api.github.com/graphql`, options)
             .then(response => response.json())
             .then(data => pullRequests.push(data));
     }
-    console.log(pullRequests[0]);
-    console.log(pullRequests);
+    return pullRequests;
+}
+
+function filterPullRequests(pullRequests) {
     let openPullRequests = [];
-    pullRequests.forEach(function(item){
-        item['data']['search']['edges'].forEach(function(item2){
-            if (item2['node']['state']==='OPEN'){
-                console.log(item2['node'])
+    pullRequests.forEach(function (item) {
+        item['data']['search']['edges'].forEach(function (item2) {
+            if (item2['node']['state'] === 'OPEN') {
+                openPullRequests.push(item2['node']);
             }
         })
     });
-    for (let i=0; i< pullRequests.length; i++) {
-        console.log(pullRequests[i]['data']['search']['edges']);
-        for (let k=0;k<pullRequests[i]['data']['search']['edges'].length;k++){
-            console.log(pullRequests[i]['data']['search']['edges'][k]['node']['state']);
-            if (pullRequests[i]['data']['search']['edges'][k]['node']['state']==='OPEN'){
-                openPullRequests.push(pullRequests[i]['data']['search']['edges'][k]['node']);
+    let users = localStorage.getItem('users');
+    let openUsersPullRequests = []
+    if (users) {
+        for (let i = 0; i < users.length; i++) {
+            for (let k = 0; k < openPullRequests.length; k++) {
+                if (users[i] === openPullRequests[k]['author']['login']) {
+                    openUsersPullRequests.push(openPullRequests[k]);
+                }
             }
         }
+        return openUsersPullRequests;
+    } else {
+        return openPullRequests;
     }
-    console.log(openPullRequests);
 }
 
 function loadRepositories(accessToken) {
@@ -124,7 +129,8 @@ function loadRepositories(accessToken) {
     fetch(`https://api.github.com/graphql`, options)
         .then(response => response.json())
         .then(data => loadPullRequests(data['data']['viewer']['repositories']['nodes']))
-        .then(data => generateTable(data['data']['viewer']['pullRequests']['nodes']))
+        .then(data => filterPullRequests(data))
+        .then(data => generateTable(data))
         .catch(error => console.log(error));
 }
 
