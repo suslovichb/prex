@@ -20,6 +20,7 @@ document.getElementById("token-gen-btn").addEventListener("click", () => {
 document.getElementById("tokens-btn").addEventListener("click", () => {
     chrome.tabs.create({url: "https://github.com/settings/tokens"});
 });
+
 $(document).ready(function () {
     let accessToken = localStorage.getItem('accessToken');
     if (accessToken) {
