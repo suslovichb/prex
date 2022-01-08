@@ -86,7 +86,7 @@ function filterPullRequests(pullRequests) {
     if (users) {
         for (let i = 0; i < users.length; i++) {
             for (let k = 0; k < openPullRequests.length; k++) {
-                if (users[i] === openPullRequests[k]['author']['login']) {
+                if (users[i]['github'] === openPullRequests[k]['author']['login']) {
                     openUsersPullRequests.push(openPullRequests[k]);
                 }
             }
