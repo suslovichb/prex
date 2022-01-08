@@ -23,24 +23,6 @@ const queryGetRepositories = `query AllRepositories($cursor: String) {\
   }\
 }`
 
-const query = `query {\
-    viewer {\
-      pullRequests(first: 100, states: OPEN) {\
-        nodes {\
-          createdAt\
-          number\
-          title\
-          author {\
-          login\
-        }\
-        updatedAt\
-        url\
-        }\
-        totalCount\
-      }\
-    }\
-  }`;
-
 const queryGetPullRequests = ['{\
   search(query: "is:pr repo:', '", type: ISSUE, first: 100) {\
     edges {\
