@@ -57,7 +57,7 @@ async function loadPullRequests(data) {
         for (let i = 0; i < users.length; i++) {
             for (let k = 0; k < requested_repositories.length; k++) {
                 for (let PRk = 0; PRk < requested_repositories[k]['pullRequests']['nodes'].length; PRk++) {
-                    if (users[i] === requested_repositories[k]['pullRequests']['nodes'][PRk]['author']['login']) {
+                    if (users[i]['github'] === requested_repositories[k]['pullRequests']['nodes'][PRk]['author']['login']) {
                         pullRequests.push(requested_repositories[k]['pullRequests']['nodes'][PRk]);
                     }
                 }
