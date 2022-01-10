@@ -21,6 +21,7 @@ const query = 'query AllRepositories($cursor: String) {\n' +
     '        name\n' +
     '        pullRequests(first: 100, states: OPEN) {\n' +
     '          nodes {\n' +
+    '            number\n' +
     '            title\n' +
     '            createdAt\n' +
     '            url\n' +
@@ -93,7 +94,7 @@ function loadRepositories(accessToken) {
 
 
 function generateTable(data) {
-    let dataKey = ['createdAt', 'title', 'author', 'updatedAt', 'url', 'pending days'];
+    let dataKey = ['number', 'createdAt', 'title', 'author', 'updatedAt', 'url', 'pending days'];
     let table = "<table>";
     table += "<thead><tr>";
     for (let key in dataKey) {
