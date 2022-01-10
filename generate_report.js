@@ -51,7 +51,7 @@ async function loadPullRequests(data) {
         for (let repos_i = 0; repos_i < repos.length; repos_i++) {
             for (let data_i = 0; data_i < data.length; data_i++) {
                 let name_external = data[data_i]['nameWithOwner'].split('/')[1];
-                if (name_external === repos[repos_i] || data[data_i]['nameWithOwner'] === repos[repos_i]) {
+                if (name_external === repos[repos_i]['link'] || data[data_i]['nameWithOwner'] === repos[repos_i]['link']) {
                     requested_repositories.push(data[data_i]['nameWithOwner']);
                 }
             }
