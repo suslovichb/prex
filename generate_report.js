@@ -28,6 +28,7 @@ const queryGetPullRequests = ['{\
     edges {\
       node {\
         ... on PullRequest {\
+          number\
           title\
           createdAt\
           url\
