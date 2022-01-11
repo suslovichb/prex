@@ -1,13 +1,13 @@
 $(document).ready(function () {
     let accessToken = localStorage.getItem('accessToken');
     if (accessToken) {
-        loadPullRequests(accessToken);
+        getPullRequests(accessToken).then(r => generateTable(r));
     } else {
         chrome.runtime.sendMessage({Ready: 'True'});
         chrome.runtime.onMessage.addListener(
             function (request, sender, sendResponse) {
                 accessToken = request.Token;
-                loadPullRequests(accessToken);
+                getPullRequests(accessToken).then(r => generateTable(r));
             }
         )
     }
@@ -39,7 +39,6 @@ function getListRepos() {
     const reposStorage = JSON.parse(localStorage.getItem('repos'));
     let listRepos = [];
     for (const repo of reposStorage) {
-        console.log(repo);
         listRepos.push(repo['link']);
     }
     return listRepos;
@@ -55,7 +54,7 @@ function getUserQuery() {
 }
 
 
-async function loadPullRequests(accessToken) {
+async function getPullRequests(accessToken) {
     let options = {
         method: "post",
         headers: {
@@ -72,31 +71,29 @@ async function loadPullRequests(accessToken) {
             "query": queryGetPullRequests[0] + "repo:" + repo + " " + usersQuery + queryGetPullRequests[1]
         });
         let response = (await (await fetch(`https://api.github.com/graphql`, options)).json());
-        let response_filtered = response['data']['search']['edges'];
-        for (const data of response_filtered) {
-            pullRequests.push(data['node']);
+        for (const responseIterator of response['data']['search']['edges']) {
+            pullRequests.push(responseIterator['node']);
         }
     }
-    generateTable(pullRequests);
+    return pullRequests;
 }
 
 
 function generateTable(data) {
-    const dataKey = ['number', 'title', 'author', 'url', 'pending days'];
+    const dataKeys = ['number', 'title', 'author', 'url', 'pending days'];
     let table = "<table><thead><tr>";
     const today = Date.now();
-    for (const key in dataKey) {
-        table += "<th>" + dataKey[key] + "</th>";
+    for (const dataKey of dataKeys) {
+        table += "<th>" + dataKey + "</th>";
     }
     table += "</tr></thead><tbody>";
-    for (let i = 0; i < data.length; i++) {
-        table += '<tr class="table-light"><td>' + (i + 1) + "</td><td>" + data[i]['title'] + "</td><td>" + data[i]['author']['name'] +
-            '</td><td><a href="' + data[i]['url'] + '">' + data[i]['url'] + '</a></td><td>' +
-            Math.trunc((today - Date.parse(data[i]['updatedAt'])) / (1000 * 3600 * 24)) + "</td></tr>";
-    }
+    table += data.map((item, index) => '<tr class="table-light"><td>' + (index + 1) + "</td><td>" + item['title'] +
+        "</td><td>" + item['author']['name'] + '</td><td><a href="' + item['url'] + '">' + item['url'] + '</a></td><td>'
+        + Math.trunc((today - Date.parse(item['updatedAt'])) / (1000 * 3600 * 24)) + "</td></tr>"
+    );
     table += "</tbody></table>";
 
-    document.getElementById("table").innerHTML = table;
+    document.getElementById("reportTable").innerHTML = table;
 }
 
 
