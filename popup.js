@@ -19,7 +19,7 @@ document.getElementById("report-btn").addEventListener("click", () => {
             document.getElementById("errorHandler").innerHTML = 'Fill list of repos and users in settings';
         } else if (repos === null) {
             document.getElementById("errorHandler").innerHTML = 'Fill list of repos in settings';
-        } else {
+        } else if (users === null) {
             document.getElementById("errorHandler").innerHTML = 'Fill list of users in settings';
         }
     }
