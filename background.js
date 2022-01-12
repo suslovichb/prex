@@ -1,21 +1,22 @@
-const accessToken = "your_token"
+const accessToken = ""
 
-const query = `query {\
-    viewer {\
-      pullRequests(first: 100, states: OPEN) {\
-        totalCount\
-        nodes {\
-          createdAt\
-          number\
-          title\
-        }\
-        pageInfo {\
-          hasNextPage\
-          endCursor\
+
+const query = `query AllRepositories($cursor: String) {\
+  viewer {\
+    repositories(first:100, ownerAffiliations: [OWNER, ORGANIZATION_MEMBER, COLLABORATOR], affiliations: [OWNER, ORGANIZATION_MEMBER, COLLABORATOR], after: $cursor) {\
+      nodes {\
+        nameWithOwner\
+        pullRequests(first: 100, states: OPEN) {\
+          nodes {\
+            number\
+            title\
+            createdAt\
+          }\
         }\
       }\
     }\
-  }`;
+  }\
+}`
 
 
 const loadPullRequests = () => {

@@ -1,1 +1,1 @@
-document.getElementById("home-btn").addEventListener("click", () => {chrome.tabs.create({url: "home.html"})});
+document.getElementById("settings-btn").addEventListener("click", () => {chrome.tabs.create({url: "settings.html"})});

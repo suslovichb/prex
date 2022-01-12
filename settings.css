@@ -1,0 +1,93 @@
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    margin: 0;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background: linear-gradient(45deg, rgb(39, 79, 189), rgb(20, 223, 234));
+}
+
+/* #sections-tabs-content {
+    border: 1px solid black;
+} */
+
+#tabs-container {
+    border-radius: 0.5rem;
+    /* border: 1px solid red; */
+    box-shadow:
+        0 1px 3px 1px rgb(60, 64, 67);
+}
+
+.tabs-left {
+    border-bottom: none;
+    /* border-right: 1px solid orange; */
+    /* border-radius: 10px 0 0 10px; */
+    /* background-color: grey; */
+    padding: 0;
+    /* border: 1px solid rgb(200, 200, 200); */
+    border-right: none;
+    /* margin-right: -1px; */
+}
+
+.tabs-left-wrapper {
+    background-color: rgb(210, 210, 210);
+    border-radius: 0.5rem 0 0 0.5rem;
+    /* border: 1px solid red; */
+    /* margin-right: -1px; */
+}
+
+/* .tabs-left>.nav-item { */
+    /* background-color: palevioletred; */
+    /* float: none; */
+    /* margin-bottom: 2px; */
+    /* margin-right: -1px; */
+    /* border: 1px solid black; */
+  /* } */
+
+.tabs-left .nav-link.active,
+.tabs-left .nav-link.active:hover,
+.tabs-left .nav-link.active:focus {
+/*     
+    border: 1px solid red;
+    border-right: none; */
+    border-radius: 0.5rem 0 0 0.5rem;
+    /* border-bottom-color: rgb(233, 8, 8); */
+    /* border-right-color: transparent; */
+    /* margin-right: -1px; */
+    /* box-shadow: -1px 0px 2px -1px #fd0000; */
+}
+
+.tabs-left>li>.nav-link {
+    /* margin-right: -1px; */
+    border: none;
+    border-radius: 0;
+    margin-bottom: 0;
+    /* margin-left: 4px; */
+    display:block;
+    /* background-color: rgb(210, 210, 210); */
+    color: rgb(180, 180, 180);
+    /* border-color: rgb(190, 190, 190); */
+    width: 100%;
+}
+
+/* .tabs-left>li:first-child>.nav-link {
+    border-radius: 10px 0 0 0;
+}
+.tabs-left>li:last-child>.nav-link {
+    border-radius: 0 0 0 10px;
+} */
+
+.tab-content {
+    background-color: white;
+    padding: 5px;
+    /* border: 1px solid rgb(190, 190, 190); */
+    border-radius: 0 0.5rem 0.5rem 0;
+}
+
+#header {
+    background-color: black;
+    color: white;
+}

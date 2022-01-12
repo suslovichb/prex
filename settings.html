@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Prex Settings</title>
+        <link href="./bootstrap.min.css" rel="stylesheet">
+        <script src="./bootstrap.min.js" type="text/javascript"></script>
+        <script src="./jquery-3.6.0.min.js" type="text/javascript"></script>
+        <link href="./settings.css" rel="stylesheet">
+    </head>
+
+    <body>
+        <div class="d-flex align-items-stretch" id="header">
+            <div class="my-2 mx-4 flex-grow-1 d-flex align-items-center">
+                <div>
+                    PREX
+                </div>
+            </div>
+            <div class="my-2 mx-4">
+                <span>Storage key:</span>
+                <input type="text" class="border-0 rounded-3" name="storage-key">
+                <button type="button" class="btn btn-secondary px-1 py-0">
+                    Load storage
+                </button>
+            </div>
+        </div>
+
+        <div class="d-flex align-items-stretch m-4" id="tabs-container">
+            <div class="tabs-left-wrapper">
+                <ul class="nav flex-column nav-tabs tabs-left" id="sections-tabs" 
+                    role="tablist" aria-orientation="vertical">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="settings-tab" data-bs-toggle="tab" 
+                                data-bs-target="#settings" type="button" role="tab" 
+                                aria-controls="settings" aria-selected="true">
+                            Settings
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="reporting-tab" data-bs-toggle="tab" 
+                                data-bs-target="#reporting" type="button" role="tab" 
+                                aria-controls="reporting" aria-selected="false">
+                            Reporting
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="users-tab" data-bs-toggle="tab" 
+                                data-bs-target="#users" type="button" role="tab" 
+                                aria-controls="users" aria-selected="false">
+                            Users
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="repositories-tab" data-bs-toggle="tab" 
+                                data-bs-target="#repositories" type="button" role="tab" 
+                                aria-controls="repositories" aria-selected="false">
+                            Repositories
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="statistics-tab" data-bs-toggle="tab" 
+                                data-bs-target="#statistics" type="button" role="tab" 
+                                aria-controls="statistics" aria-selected="false">
+                            Statistics
+                        </button>
+                    </li>           
+                </ul>
+            </div>
+            <div class="tab-content flex-grow-1" id="sections-tabs-content">
+                <div class="tab-pane fade show active" id="settings" 
+                     role="tabpanel" aria-labelledby="settings-tab">
+                    <div class="my-2 mx-4 d-flex flex-column align-items-start">
+                        <label for="gh-token-input">GitHub Access Token:</label>
+                        <input type="text" id="gh-token-input" class="rounded-3" name="gh-token-input">
+                        <button type="button" class="btn btn-secondary px-1 py-0 mt-1">Save</button>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="reporting" role="tabpanel" aria-labelledby="reporting-tab">
+                    Reporting stuff
+                    <div>.</div>
+                    <div>.</div>
+                    <div>.</div>
+                    <div>.</div>
+                    <div>.</div>
+                    <div>.</div>
+                    <div>
+                        <button type="button" class="btn btn-secondary px-1 py-0 mt-1">
+                            Generate
+                        </button>
+                    </div>                   
+                </div>
+                <div class="tab-pane fade" id="users" role="tabpanel" aria-labelledby="users-tab">
+                    Users list
+                    <div>.</div>
+                    <div>.</div>
+                    <div>.</div>
+                    <div>.</div>
+                    <div>.</div>
+                    <div>.</div>
+
+                    <form id="add-user-form" class="my-2 mx-4 d-flex flex-column align-items-start">
+                        <div class="d-flex flex-row">
+                            <div class="d-flex flex-column m-2">
+                                <label class="small" for="user-name-input">Name</label>
+                                <input type="text" id="user-name-input" class="rounded-3" name="name">
+                            </div>
+                            <div class="d-flex flex-column m-2">
+                                <label class="small" for="user-link-input">GitHub</label>
+                                <input type="text" id="user-link-input" class="rounded-3" name="link">
+                            </div>                          
+                        </div>
+                        <button type="submit" class="btn btn-secondary px-1 py-0 m-2">Add user</button>
+                    </form>
+
+                </div>
+                <div class="tab-pane fade" id="repositories" role="tabpanel" aria-labelledby="repositories-tab">
+                    Repositories list
+                    <div>.</div>
+                    <div>.</div>
+                    <div>.</div>
+                    <div>.</div>
+                    <div>.</div>
+                    <div>.</div>
+                    <div>.</div>
+                    <div>.</div>
+                    <form id="add-repo-form" class="my-2 mx-4 d-flex flex-column align-items-start">
+                        <div class="d-flex flex-row">
+                            <div class="d-flex flex-column m-2">
+                                <label class="small" for="repo-link-input">Link</label>
+                                <input type="text" id="repo-link-input" class="rounded-3" name="user-link-input">
+                            </div>
+                            <div class="d-flex flex-column m-2">
+                                <label class="small" for="repo-comment-input">Comment</label>
+                                <input type="text" id="repo-comment-input" class="rounded-3" name="repo-comment-input">
+                            </div>                          
+                        </div>
+                        <button type="submit" class="btn btn-secondary px-1 py-0 m-2">Add repository</button>
+                    </form>
+                </div>
+                <div class="tab-pane fade" id="statistics" role="tabpanel" aria-labelledby="statistics-tab">
+                    Statistics stuff
+                    <div>.</div>
+                    <div>.</div>
+                    <div>.</div>
+                    <div>.</div>
+                    <div>.</div>
+                    <div>.</div>
+                    <div>.</div>
+                    <div>.</div>
+                    <div>.</div>
+                    <div>.</div>
+                    <div>
+                        <button type="button" class="btn btn-secondary px-1 py-0 mt-1">
+                            Update
+                        </button>
+                    </div> 
+                </div>
+            </div>
+        </div>
+        <script src="./settings.js" type="text/javascript"></script>
+    </body>
+</html>
