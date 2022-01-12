@@ -1,14 +1,3 @@
-var encryptedAES = CryptoJS.AES.encrypt("Message", "My Secret");
-console.log("encryptedAES:")
-console.log(encryptedAES)
-var decryptedBytes = CryptoJS.AES.decrypt(encryptedAES, "My Secret");
-console.log("decryptedBytes:")
-console.log(decryptedBytes)
-var plaintext = decryptedBytes.toString(CryptoJS.enc.Utf8);
-console.log("plaintext:")
-console.log(plaintext)
-
-
 $( document ).ready(function() {
     
     let storageState = {
@@ -33,9 +22,6 @@ $( document ).ready(function() {
           }
     } 
 
-
-
-
     $("#add-user-form").submit(function(event) {
         event.preventDefault();
         var values = $(this).serialize();
@@ -50,10 +36,7 @@ $( document ).ready(function() {
         //     console.log('User saved');
         //   });
 
-
     });
-    
-
 
 });
 
