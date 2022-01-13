@@ -65,16 +65,20 @@ async function getPullRequests(accessToken) {
         body: ""
     };
     const listRepos = getListRepos();
-    const userQuerys = getUserQuery();
+    const userQueries = getUserQuery();
     let pullRequests = [];
     for (const repo of listRepos) {
-        for (const userQuery of userQuerys) {
+        for (const userQuery of userQueries) {
             options['body'] = JSON.stringify({
                 "query": queryGetPullRequests[0] + "repo:" + repo + " " + userQuery + queryGetPullRequests[1]
             });
-            let response = (await (await fetch(`https://api.github.com/graphql`, options)).json());
-            for (const responseIterator of response['data']['search']['edges']) {
-                pullRequests.push(responseIterator['node']);
+            try {
+                let response = (await (await fetch(`https://api.github.com/graphql`, options)).json());
+                for (const responseIterator of response['data']['search']['edges']) {
+                    pullRequests.push(responseIterator['node']);
+                }
+            } catch (e) {
+                console.log(e);
             }
         }
     }
