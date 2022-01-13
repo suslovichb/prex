@@ -1,5 +1,6 @@
 $(document).ready(function () {
     let accessToken = localStorage.getItem('accessToken');
+    document.querySelector('.preloader').style.display = 'flex';
     if (accessToken) {
         getPullRequests(accessToken).then(r => generateTable(r));
     } else {
@@ -46,11 +47,11 @@ function getListRepos() {
 
 function getUserQuery() {
     const users = JSON.parse(localStorage.getItem('users'));
-    let usersQuery = "";
+    let userQuerys = [];
     for (const user of users) {
-        usersQuery += "author:" + user['github'] + " ";
+        userQuerys.push("author:" + user['github'] + " ");
     }
-    return usersQuery;
+    return userQuerys;
 }
 
 
@@ -64,15 +65,21 @@ async function getPullRequests(accessToken) {
         body: ""
     };
     const listRepos = getListRepos();
-    const usersQuery = getUserQuery();
+    const userQueries = getUserQuery();
     let pullRequests = [];
     for (const repo of listRepos) {
-        options['body'] = JSON.stringify({
-            "query": queryGetPullRequests[0] + "repo:" + repo + " " + usersQuery + queryGetPullRequests[1]
-        });
-        let response = (await (await fetch(`https://api.github.com/graphql`, options)).json());
-        for (const responseIterator of response['data']['search']['edges']) {
-            pullRequests.push(responseIterator['node']);
+        for (const userQuery of userQueries) {
+            options['body'] = JSON.stringify({
+                "query": queryGetPullRequests[0] + "repo:" + repo + " " + userQuery + queryGetPullRequests[1]
+            });
+            try {
+                let response = (await (await fetch(`https://api.github.com/graphql`, options)).json());
+                for (const responseIterator of response['data']['search']['edges']) {
+                    pullRequests.push(responseIterator['node']);
+                }
+            } catch (e) {
+                console.log(e);
+            }
         }
     }
     return pullRequests;
@@ -93,6 +100,7 @@ function generateTable(data) {
     );
     table += "</tbody></table>";
 
+    document.querySelector('.preloader').style.display = 'none';
     document.getElementById("reportTable").innerHTML = table;
 }
 
