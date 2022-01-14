@@ -21,13 +21,6 @@
             <div class="tabs-left-wrapper">
                 <ul class="nav flex-column nav-tabs tabs-left" id="sections-tabs" 
                     role="tablist" aria-orientation="vertical">
-                    <!-- <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="settings-tab" data-bs-toggle="tab" 
-                                data-bs-target="#settings" type="button" role="tab" 
-                                aria-controls="settings" aria-selected="true">
-                            GitHub
-                        </button>
-                    </li> -->
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="users-tab" data-bs-toggle="tab" 
                                 data-bs-target="#users" type="button" role="tab" 
@@ -44,23 +37,12 @@
                     </li>
                 </ul>
             </div>
-            <div class="tab-content flex-grow-1" id="sections-tabs-content">
-                <!-- <div class="tab-pane fade show active" id="settings" 
-                     role="tabpanel" aria-labelledby="settings-tab">
-                    <div class="my-2 mx-4 d-flex flex-column align-items-start">
-                        <label for="gh-token-input">GitHub Access Token:</label>
-                        <input type="text" id="gh-token-input" class="rounded-3" name="gh-token-input">
-                        <button type="button" class="btn btn-secondary px-1 py-0 mt-1">Save</button>
-                    </div>
-                </div> -->              
+            <div class="tab-content flex-grow-1" id="sections-tabs-content">          
                 <div class="tab-pane fade show active" id="users" role="tabpanel" aria-labelledby="users-tab">
                     Users list
-                    <div>.</div>
-                    <div>.</div>
-                    <div>.</div>
-                    <div>.</div>
-                    <div>.</div>
-                    <div>.</div>
+                    <div id="users-table-container">
+                    </div>
+
                     <form id="add-user-form" class="my-2 mx-4 d-flex flex-column align-items-start">
                         <div class="d-flex flex-row">
                             <div class="d-flex flex-column m-2">
@@ -77,23 +59,18 @@
                 </div>
                 <div class="tab-pane fade" id="repositories" role="tabpanel" aria-labelledby="repositories-tab">
                     Repositories list
-                    <div>.</div>
-                    <div>.</div>
-                    <div>.</div>
-                    <div>.</div>
-                    <div>.</div>
-                    <div>.</div>
-                    <div>.</div>
-                    <div>.</div>
+                    <div id="repo-table-container">
+                    </div>
+
                     <form id="add-repo-form" class="my-2 mx-4 d-flex flex-column align-items-start">
                         <div class="d-flex flex-row">
                             <div class="d-flex flex-column m-2">
                                 <label class="small" for="repo-link-input">Link</label>
-                                <input type="text" id="repo-link-input" class="rounded-3" name="user-link-input">
+                                <input type="text" id="repo-link-input" class="rounded-3" name="link">
                             </div>
                             <div class="d-flex flex-column m-2">
                                 <label class="small" for="repo-comment-input">Comment</label>
-                                <input type="text" id="repo-comment-input" class="rounded-3" name="repo-comment-input">
+                                <input type="text" id="repo-comment-input" class="rounded-3" name="comment">
                             </div>                          
                         </div>
                         <button type="submit" class="btn btn-secondary px-1 py-0 m-2">Add repository</button>
