@@ -13,6 +13,7 @@ How to use
 * Click Prex button to open extension menu
 * Put your GitHub access token into input field 
   * to generate new one click “generate new token”
+  * for requests to work correctly, sufficient rights for the token will be public_repo and repo:invite
 * Click “REPORT” to get report about PRs
 
 
