@@ -47,11 +47,11 @@ function getListRepos() {
 
 function getUserQuery() {
     const users = JSON.parse(localStorage.getItem('users'));
-    let userQuerys = [];
+    let userQueries = [];
     for (const user of users) {
-        userQuerys.push("author:" + user['github'] + " ");
+        userQueries.push("author:" + user['github'] + " ");
     }
-    return userQuerys;
+    return userQueries;
 }
 
 
