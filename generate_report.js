@@ -37,7 +37,7 @@ const queryGetPullRequests = ['{\
 
 
 function getListRepos() {
-    const reposStorage = JSON.parse(localStorage.getItem('repos'));
+    const reposStorage = JSON.parse(localStorage.getItem('repositories'));
     let listRepos = [];
     for (const repo of reposStorage) {
         listRepos.push(repo['link']);
@@ -50,6 +50,7 @@ function getUserQuery() {
     let userQueries = [];
     for (const user of users) {
         userQueries.push("author:" + user['github'] + " ");
+        userQuerys.push("author:" + user['link'] + " ");
     }
     return userQueries;
 }

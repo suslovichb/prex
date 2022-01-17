@@ -1,0 +1,55 @@
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    margin: 0;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background: linear-gradient(45deg, rgb(39, 79, 189), rgb(20, 223, 234));
+}
+
+#tabs-wrapper {
+    border-radius: 0.5rem;
+    box-shadow:
+        0 1px 3px 1px rgb(60, 64, 67);
+}
+
+.tabs-left {
+    border-bottom: none;
+    padding: 0;
+    border-right: none;
+}
+
+.tabs-left-wrapper {
+    background-color: rgb(210, 210, 210);
+    border-radius: 0.5rem 0 0 0.5rem;
+}
+
+.tabs-left .nav-link.active,
+.tabs-left .nav-link.active:hover,
+.tabs-left .nav-link.active:focus {
+    border-radius: 0.5rem 0 0 0.5rem;
+}
+
+.tabs-left>li>.nav-link {
+    border: none;
+    border-radius: 0;
+    margin-bottom: 0;
+    display:block;
+    color: rgb(180, 180, 180);
+    width: 100%;
+}
+
+.tab-content {
+    background-color: white;
+    padding: 5px;
+    /* border: 1px solid rgb(190, 190, 190); */
+    border-radius: 0 0.5rem 0.5rem 0;
+}
+
+#header {
+    background-color: black;
+    color: white;
+}
