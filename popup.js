@@ -1,10 +1,15 @@
 document.getElementById("settings-btn").addEventListener("click", () => {
     chrome.tabs.create({url: "settings.html"})
 });
-
+const repositories = {};
+const users = {};
+chrome.storage.local.get('repositories', (data) => {
+    Object.assign(reposStorage, JSON.parse(data.repositories));
+});
+chrome.storage.local.get('users', (data) => {
+    Object.assign(users, JSON.parse(data.users));
+});
 document.getElementById("report-btn").addEventListener("click", () => {
-    const repositories = chrome.storage.local.get('repositories');
-    const users = chrome.storage.local.get('users');
     if (repositories && users) {
         localStorage.setItem('Token', document.getElementById("token-input").value);
         chrome.tabs.create({url: "report.html"});
