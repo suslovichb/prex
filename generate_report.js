@@ -108,7 +108,6 @@ function generateTable(data) {
     )){
         table+=row;
     }
-    console.log(table);
     table += "</tbody></table>";
 
     document.querySelector('.preloader').style.display = 'none';
