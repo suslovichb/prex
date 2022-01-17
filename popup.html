@@ -5,18 +5,12 @@
     <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-<div style="padding:10px; width: 200px;">
+<div id="main-container">
     <div class="outer">
-        <button type="button" id="home-btn" class="btn">
-            <b>HOME</b>
-        </button>
+        <form id="token-form">
+            <input class="form-control" type="text" id="token-input" placeholder="Token">
+        </form>
     </div>
-
-    <div class="outer">
-        <form class="d-flex">
-            <input class="form-control me-sm-2" type="text" id="TokenFieldId" placeholder="Token"></form>
-    </div>
-
     <div class="outer">
         <button type="button" id="report-btn" class="btn">
             <b>REPORT</b>
@@ -32,7 +26,12 @@
             <b>View tokens</b>
         </button>
     </div>
-    <div id="errorHandler" style="">
+    <div class="outer">
+        <button type="button" id="settings-btn" class="btn">
+            <b>Settings</b>
+        </button>
+    </div>
+    <div id="errorHandler">
 
     </div>
 </div>
