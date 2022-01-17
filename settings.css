@@ -10,7 +10,7 @@ body {
     background: linear-gradient(45deg, rgb(39, 79, 189), rgb(20, 223, 234));
 }
 
-#tabs-container {
+#tabs-wrapper {
     border-radius: 0.5rem;
     box-shadow:
         0 1px 3px 1px rgb(60, 64, 67);
