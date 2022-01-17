@@ -3,17 +3,11 @@ document.getElementById("settings-btn").addEventListener("click", () => {
 });
 
 document.getElementById("report-btn").addEventListener("click", () => {
-    const repos = localStorage.getItem('repositories');
-    const users = localStorage.getItem('users');
-    if (repos && users) {
+    const repositories = chrome.storage.local.get('repositories');
+    const users = chrome.storage.local.get('users');
+    if (repositories && users) {
+        localStorage.setItem('Token', document.getElementById("token-input").value);
         chrome.tabs.create({url: "report.html"});
-        chrome.runtime.onMessage.addListener(
-            function (request, sender, sendResponse) {
-                if (request.Ready === 'True') {
-                    chrome.runtime.sendMessage({Token: document.getElementById("token-input").value});
-                }
-            }
-        )
     } else {
         if (repos === null && users === null) {
             document.getElementById("errorHandler").innerHTML = 'Fill list of repos and users in settings';
