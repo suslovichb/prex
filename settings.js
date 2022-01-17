@@ -1,7 +1,9 @@
 $( document ).ready(function() {
 
-    const userFields = ["name", "link"];
+    // First field - identifier - must be unique for every entity 
+    const userFields = ["link", "name"];
     const repositoryFields = ["link"];
+    
     const usersContainerId = "users-table-container"
     const repositoriesContainerId = "repo-table-container"
     const tableClasses = ["table", "table-hover"]
@@ -59,6 +61,7 @@ $( document ).ready(function() {
         event.preventDefault();
         let values = $(this).serializeArray().reduce((o,kv) => ({...o, [kv.name]: kv.value}), {});
         addUser(values);
+        $(this).trigger("reset");
     });
 
     const validateRepositories = (repositories) => (Array.isArray(repositories) && repositories.length > 0);
@@ -89,6 +92,7 @@ $( document ).ready(function() {
         event.preventDefault();
         let values = $(this).serializeArray().reduce((o,kv) => ({...o, [kv.name]: kv.value}), {});
         addRepository(values);
+        $(this).trigger("reset");
     });
 
     const buildTable = (columnNames, items, htmlContainerId) => {
@@ -101,12 +105,17 @@ $( document ).ready(function() {
             <table class="${tableClasses.join(" ")}">
                 <thead>
                     ${makeHeaders(columnNames)}
+                    ${actionsHeader()}
                 </thead>
                 <tbody>
                     ${makeRows(columnNames, items)}
                 </tbody>        
             </table>
         `);
+    }
+
+    const actionsHeader = () => {
+        return `<th>actions</th>`;
     }
 
     const makeHeaders = (columnNames) => {
@@ -119,8 +128,52 @@ $( document ).ready(function() {
 
     const makeRow = (columnNames, item) => {
         let cells = columnNames.map((columnName) => `<td>${item[columnName]}</td>`).join("");
-        return `<tr>${cells}</tr>`;
+        return `<tr>${cells}${actionsCell(item[columnNames[0]])}</tr>`;
     }
+
+    const actionsCell = (itemId) => {
+        return (`
+            <td>
+                <button class="delete-btn" itemId="${itemId}">
+                    Delete
+                </button>
+            </td>
+        `);
+    }
+
+    const deleteUser = (id) => {
+        setUsers(
+            [...users].filter((user) => (user[userFields[0]] !== id))
+        );
+
+        chrome.storage.local.set(
+            {"users":JSON.stringify([...users])}
+        );
+    }
+
+    const deleteRepository = (id) => {
+        setRepositories(
+            [...repositories].filter((repo) => (repo[repositoryFields[0]] !== id))
+        );
+
+        chrome.storage.local.set(
+            {"repositories":JSON.stringify([...repositories])}
+        );
+    }
+
+    $('#users-table-container').on('click', '.delete-btn', function() {
+        let id = $(this).attr('itemId');
+        loadLocalUsers().then(() => {
+            deleteUser(id)
+        });
+    });
+
+    $('#repo-table-container').on('click', '.delete-btn', function() {
+        let id = $(this).attr('itemId');
+        loadLocalRepositories().then(() => {
+            deleteRepository(id)
+        });
+    });
 
     loadLocalUsers();
     loadLocalRepositories();
