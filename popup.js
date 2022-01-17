@@ -3,14 +3,14 @@ document.getElementById("settings-btn").addEventListener("click", () => {
 });
 
 document.getElementById("report-btn").addEventListener("click", () => {
-    const repos = localStorage.getItem('repos');
+    const repos = localStorage.getItem('repositories');
     const users = localStorage.getItem('users');
     if (repos && users) {
         chrome.tabs.create({url: "report.html"});
         chrome.runtime.onMessage.addListener(
             function (request, sender, sendResponse) {
                 if (request.Ready === 'True') {
-                    chrome.runtime.sendMessage({Token: document.getElementById("TokenFieldId").value});
+                    chrome.runtime.sendMessage({Token: document.getElementById("token-input").value});
                 }
             }
         )
@@ -36,6 +36,6 @@ document.getElementById("tokens-btn").addEventListener("click", () => {
 $(document).ready(function () {
     let accessToken = localStorage.getItem('accessToken');
     if (accessToken) {
-        document.getElementById("TokenFieldId").hidden = true;
+        document.getElementById("token-input").hidden = true;
     }
 });
