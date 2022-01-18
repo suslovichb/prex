@@ -1,27 +1,20 @@
 document.getElementById("settings-btn").addEventListener("click", () => {
     chrome.tabs.create({url: "settings.html"})
 });
-
+let repositories = {};
+let users = {};
+chrome.storage.local.get('repositories', (data) => {
+    Object.assign(repositories, JSON.parse(data.repositories));
+});
+chrome.storage.local.get('users', (data) => {
+    Object.assign(users, JSON.parse(data.users));
+});
 document.getElementById("report-btn").addEventListener("click", () => {
-    const repos = localStorage.getItem('repositories');
-    const users = localStorage.getItem('users');
-    if (repos && users) {
+    if (repositories && users ) {
+        localStorage.setItem('Token', document.getElementById("token-input").value);
         chrome.tabs.create({url: "report.html"});
-        chrome.runtime.onMessage.addListener(
-            function (request, sender, sendResponse) {
-                if (request.Ready === 'True') {
-                    chrome.runtime.sendMessage({Token: document.getElementById("token-input").value});
-                }
-            }
-        )
     } else {
-        if (repos === null && users === null) {
-            document.getElementById("errorHandler").innerHTML = 'Fill list of repos and users in settings';
-        } else if (repos === null) {
-            document.getElementById("errorHandler").innerHTML = 'Fill list of repos in settings';
-        } else if (users === null) {
-            document.getElementById("errorHandler").innerHTML = 'Fill list of users in settings';
-        }
+        document.getElementById("errorHandler").innerHTML = 'Fill list of repos and users in settings';
     }
 });
 

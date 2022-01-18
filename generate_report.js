@@ -1,18 +1,19 @@
 $(document).ready(function () {
-    let accessToken = localStorage.getItem('accessToken');
+    let accessToken = localStorage.getItem('Token');
+    localStorage.removeItem('Token');
     document.querySelector('.preloader').style.display = 'flex';
-    if (accessToken) {
-        getPullRequests(accessToken).then(r => generateTable(r));
-    } else {
-        chrome.runtime.sendMessage({Ready: 'True'});
-        chrome.runtime.onMessage.addListener(
-            function (request, sender, sendResponse) {
-                accessToken = request.Token;
-                getPullRequests(accessToken).then(r => generateTable(r));
-            }
-        )
-    }
+    getPullRequests(accessToken).then(r => generateTable(r.sort(compare)));
 });
+
+function compare(a, b) {
+    if (a.updatedAt < b.updatedAt) {
+        return -1;
+    }
+    if (a.updatedAt > b.updatedAt) {
+        return 1;
+    }
+    return 0;
+}
 
 
 const queryGetPullRequests = ['{\
@@ -35,23 +36,30 @@ const queryGetPullRequests = ['{\
   }\
 }'];
 
+const reposStorage = {};
+chrome.storage.local.get('repositories', (data) => {
+    Object.assign(reposStorage, JSON.parse(data.repositories));
+});
 
-function getListRepos() {
-    const reposStorage = JSON.parse(localStorage.getItem('repositories'));
+async function getListRepos() {
     let listRepos = [];
-    for (const repo of reposStorage) {
-        listRepos.push(repo['link']);
+    for (const repo in reposStorage) {
+        listRepos.push(reposStorage[repo]['link']);
     }
     return listRepos;
 }
 
-function getUserQuery() {
-    const users = JSON.parse(localStorage.getItem('users'));
-    let userQuerys = [];
-    for (const user of users) {
-        userQuerys.push("author:" + user['link'] + " ");
+const users = {};
+chrome.storage.local.get('users', (data) => {
+    Object.assign(users, JSON.parse(data.users));
+});
+
+async function getUserQuery() {
+    let userQueries = [];
+    for (const user in users) {
+        userQueries.push("author:" + users[user]['link'] + " ");
     }
-    return userQuerys;
+    return userQueries;
 }
 
 
@@ -64,23 +72,23 @@ async function getPullRequests(accessToken) {
         },
         body: ""
     };
-    const listRepos = getListRepos();
-    const userQueries = getUserQuery();
+    const listRepos = await getListRepos();
+    const userQueries = await getUserQuery();
     let pullRequests = [];
-    for (const repo of listRepos) {
-        for (const userQuery of userQueries) {
-            options['body'] = JSON.stringify({
-                "query": queryGetPullRequests[0] + "repo:" + repo + " " + userQuery + queryGetPullRequests[1]
-            });
-            try {
+    try {
+        for (const repo of listRepos) {
+            for (const userQuery of userQueries) {
+                options['body'] = JSON.stringify({
+                    "query": queryGetPullRequests[0] + "repo:" + repo + " " + userQuery + queryGetPullRequests[1]
+                });
                 let response = (await (await fetch(`https://api.github.com/graphql`, options)).json());
                 for (const responseIterator of response['data']['search']['edges']) {
                     pullRequests.push(responseIterator['node']);
                 }
-            } catch (e) {
-                console.log(e);
             }
         }
+    } catch (e) {
+        console.log(e);
     }
     return pullRequests;
 }
@@ -94,10 +102,12 @@ function generateTable(data) {
         table += "<th>" + dataKey + "</th>";
     }
     table += "</tr></thead><tbody>";
-    table += data.map((item, index) => '<tr class="table-light"><td>' + (index + 1) + "</td><td>" + item['title'] +
+    for (const row of data.map((item, index) => '<tr class="table-light"><td>' + (index + 1) + "</td><td>" + item['title'] +
         "</td><td>" + item['author']['name'] + '</td><td><a href="' + item['url'] + '">' + item['url'] + '</a></td><td>'
         + Math.trunc((today - Date.parse(item['updatedAt'])) / (1000 * 3600 * 24)) + "</td></tr>"
-    );
+    )){
+        table+=row;
+    }
     table += "</tbody></table>";
 
     document.querySelector('.preloader').style.display = 'none';
