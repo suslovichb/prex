@@ -44,7 +44,7 @@ chrome.storage.local.get('repositories', (data) => {
 async function getListRepos() {
     let listRepos = [];
     for (const repo in reposStorage) {
-        listRepos.push(reposStorage[repo]['link']);
+        listRepos.push(reposStorage[repo]['path']);
     }
     return listRepos;
 }
@@ -57,7 +57,7 @@ chrome.storage.local.get('users', (data) => {
 async function getUserQuery() {
     let userQueries = [];
     for (const user in users) {
-        userQueries.push("author:" + users[user]['link'] + " ");
+        userQueries.push("author:" + users[user]['github'] + " ");
     }
     return userQueries;
 }
