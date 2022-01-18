@@ -27,7 +27,7 @@ function compare(a, b) {
 
 let repositories = [];
 let userQueries = [];
-chrome.storage.local.get(["users", "repositories"], async (storage) => {
+chrome.storage.local.get(["users", "repositories"], (storage) => {
     const repositoryList = JSON.parse(storage.repositories);
     const usersList = JSON.parse(storage.users);
     for (const user in usersList) {
