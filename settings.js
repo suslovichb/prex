@@ -1,8 +1,8 @@
 $( document ).ready(function() {
 
     // First field - identifier - must be unique for every entity 
-    const userFields = ["link", "name"];
-    const repositoryFields = ["link"];
+    const userFields = ["github", "alias"];
+    const repositoryFields = ["path"];
     
     const usersContainerId = "users-table-container"
     const repositoriesContainerId = "repo-table-container"
