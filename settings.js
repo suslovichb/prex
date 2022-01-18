@@ -7,6 +7,7 @@ $( document ).ready(function() {
     const usersContainerId = "users-table-container"
     const repositoriesContainerId = "repo-table-container"
     const tableClasses = ["table", "table-hover"]
+    const defaultCellValue = "-"
 
     let users = new Set();
     let repositories = new Set();
@@ -129,7 +130,7 @@ $( document ).ready(function() {
     }
 
     const makeRow = (columnNames, item) => {
-        let cells = columnNames.map((columnName) => `<td>${item[columnName]}</td>`).join("");
+        let cells = columnNames.map((columnName) => `<td>${item[columnName]||defaultCellValue}</td>`).join("");
         return `<tr>${cells}${actionsCell(item[columnNames[0]])}</tr>`;
     }
 
