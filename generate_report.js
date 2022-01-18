@@ -2,7 +2,17 @@ $(document).ready(function () {
     let accessToken = localStorage.getItem('Token');
     localStorage.removeItem('Token');
     document.querySelector('.preloader').style.display = 'flex';
-    getPullRequests(accessToken).then(r => generateTable(r.sort(compare)));
+    try {
+        const pullRequests = getPullRequests(accessToken);
+        generateTable(pullRequests.sort(compare));
+    } catch (e) {
+        document.querySelector('.preloader').style.display = 'none';
+        if (e.status === 0) {
+            alert(e.statusText);
+        } else {
+            alert(e.responseJSON['message']);
+        }
+    }
 });
 
 function compare(a, b) {
@@ -15,6 +25,18 @@ function compare(a, b) {
     return 0;
 }
 
+let repositories = [];
+let userQueries = [];
+chrome.storage.local.get(["users", "repositories"], async (storage) => {
+    const repositoryList = JSON.parse(storage.repositories);
+    const usersList = JSON.parse(storage.users);
+    for (const user in usersList) {
+        userQueries.push("author:" + usersList[user]['github'] + " ");
+    }
+    for (const repository in repositoryList) {
+        repositories.push(repositoryList[repository]['path']);
+    }
+});
 
 const queryGetPullRequests = ['{\
   search(query: "is:pr ', ' state:open", type: ISSUE, first: 100) {\
@@ -36,59 +58,42 @@ const queryGetPullRequests = ['{\
   }\
 }'];
 
-const reposStorage = {};
-chrome.storage.local.get('repositories', (data) => {
-    Object.assign(reposStorage, JSON.parse(data.repositories));
-});
 
-async function getListRepos() {
-    let listRepos = [];
-    for (const repo in reposStorage) {
-        listRepos.push(reposStorage[repo]['path']);
-    }
-    return listRepos;
-}
-
-const users = {};
-chrome.storage.local.get('users', (data) => {
-    Object.assign(users, JSON.parse(data.users));
-});
-
-async function getUserQuery() {
-    let userQueries = [];
-    for (const user in users) {
-        userQueries.push("author:" + users[user]['github'] + " ");
-    }
-    return userQueries;
-}
-
-
-async function getPullRequests(accessToken) {
-    let options = {
-        method: "post",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": "bearer " + accessToken
-        },
-        body: ""
-    };
-    const listRepos = await getListRepos();
-    const userQueries = await getUserQuery();
+function getPullRequests(accessToken) {
     let pullRequests = [];
-    try {
-        for (const repo of listRepos) {
-            for (const userQuery of userQueries) {
-                options['body'] = JSON.stringify({
-                    "query": queryGetPullRequests[0] + "repo:" + repo + " " + userQuery + queryGetPullRequests[1]
-                });
-                let response = (await (await fetch(`https://api.github.com/graphql`, options)).json());
-                for (const responseIterator of response['data']['search']['edges']) {
-                    pullRequests.push(responseIterator['node']);
-                }
+    let stop = false;
+    let error;
+    for (const repo of repositories) {
+        for (const userQuery of userQueries) {
+            if (stop) {
+                break;
             }
+            $.ajax({
+                type: "POST",
+                url: `https://api.github.com/graphql`,
+                contentType: "application/json",
+                headers: {
+                    Authorization: "bearer " + accessToken
+                },
+                data: JSON.stringify({
+                    "query": queryGetPullRequests[0] + "repo:" + repo + " " + userQuery + queryGetPullRequests[1]
+                }),
+                async: false,
+                dataType: 'json',
+                success: response => {
+                    for (const responseIterator of response['data']['search']['edges']) {
+                        pullRequests.push(responseIterator['node']);
+                    }
+                },
+                error: function (e) {
+                    stop = true;
+                    error = e;
+                }
+            });
         }
-    } catch (e) {
-        console.log(e);
+    }
+    if (stop) {
+        throw error;
     }
     return pullRequests;
 }
@@ -102,12 +107,15 @@ function generateTable(data) {
         table += "<th>" + dataKey + "</th>";
     }
     table += "</tr></thead><tbody>";
-    for (const row of data.map((item, index) => '<tr class="table-light"><td>' + (index + 1) + "</td><td>" + item['title'] +
-        "</td><td>" + item['author']['name'] + '</td><td><a href="' + item['url'] + '">' + item['url'] + '</a></td><td>'
-        + Math.trunc((today - Date.parse(item['updatedAt'])) / (1000 * 3600 * 24)) + "</td></tr>"
-    )){
-        table+=row;
+
+    data.forEach(generateRow);
+
+    function generateRow(item, index, array) {
+        table += '<tr class="table-light"><td>' + (index + 1) + "</td><td>" + item['title'] +
+            "</td><td>" + item['author']['name'] + '</td><td><a href="' + item['url'] + '">' + item['url'] + '</a></td><td>'
+            + Math.trunc((today - Date.parse(item['updatedAt'])) / (1000 * 3600 * 24)) + "</td></tr>";
     }
+
     table += "</tbody></table>";
 
     document.querySelector('.preloader').style.display = 'none';
