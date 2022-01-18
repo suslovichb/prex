@@ -1,21 +1,17 @@
 document.getElementById("settings-btn").addEventListener("click", () => {
     chrome.tabs.create({url: "settings.html"})
 });
-let repositories = {};
-let users = {};
-chrome.storage.local.get('repositories', (data) => {
-    Object.assign(repositories, JSON.parse(data.repositories));
-});
-chrome.storage.local.get('users', (data) => {
-    Object.assign(users, JSON.parse(data.users));
-});
 document.getElementById("report-btn").addEventListener("click", () => {
-    if (repositories && users ) {
-        localStorage.setItem('Token', document.getElementById("token-input").value);
-        chrome.tabs.create({url: "report.html"});
-    } else {
-        document.getElementById("errorHandler").innerHTML = 'Fill list of repos and users in settings';
-    }
+    chrome.storage.local.get(["users", "repositories"], (storage) => {
+        const repositories = storage.repositories;
+        const users = storage.users;
+        if (repositories && users) {
+            localStorage.setItem('Token', document.getElementById("token-input").value);
+            chrome.tabs.create({url: "report.html"});
+        } else {
+            document.getElementById("errorHandler").innerHTML = 'Fill list of repositories and users in settings';
+        }
+    })
 });
 
 document.getElementById("token-gen-btn").addEventListener("click", () => {
