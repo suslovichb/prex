@@ -1,12 +1,13 @@
 $( document ).ready(function() {
 
     // First field - identifier - must be unique for every entity 
-    const userFields = ["link", "name"];
-    const repositoryFields = ["link"];
+    const userFields = ["github", "alias"];
+    const repositoryFields = ["path"];
     
     const usersContainerId = "users-table-container"
     const repositoriesContainerId = "repo-table-container"
     const tableClasses = ["table", "table-hover"]
+    const defaultCellValue = "-"
 
     let users = new Set();
     let repositories = new Set();
@@ -62,6 +63,7 @@ $( document ).ready(function() {
         let values = $(this).serializeArray().reduce((o,kv) => ({...o, [kv.name]: kv.value}), {});
         addUser(values);
         $(this).trigger("reset");
+        $(this).find("input:text:visible:first").focus();
     });
 
     const validateRepositories = (repositories) => (Array.isArray(repositories) && repositories.length > 0);
@@ -93,6 +95,7 @@ $( document ).ready(function() {
         let values = $(this).serializeArray().reduce((o,kv) => ({...o, [kv.name]: kv.value}), {});
         addRepository(values);
         $(this).trigger("reset");
+        $(this).find("input:text:visible:first").focus();
     });
 
     const buildTable = (columnNames, items, htmlContainerId) => {
@@ -127,7 +130,7 @@ $( document ).ready(function() {
     }
 
     const makeRow = (columnNames, item) => {
-        let cells = columnNames.map((columnName) => `<td>${item[columnName]}</td>`).join("");
+        let cells = columnNames.map((columnName) => `<td>${item[columnName]||defaultCellValue}</td>`).join("");
         return `<tr>${cells}${actionsCell(item[columnNames[0]])}</tr>`;
     }
 
