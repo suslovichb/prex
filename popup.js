@@ -3,26 +3,28 @@ document.getElementById("settings-btn").addEventListener("click", () => {
 });
 
 document.getElementById("report-btn").addEventListener("click", () => {
-    const repos = localStorage.getItem('repositories');
-    const users = localStorage.getItem('users');
-    if (repos && users) {
-        chrome.tabs.create({url: "report.html"});
-        chrome.runtime.onMessage.addListener(
-            function (request, sender, sendResponse) {
-                if (request.Ready === 'True') {
-                    chrome.runtime.sendMessage({Token: document.getElementById("token-input").value});
+    chrome.storage.local.get(["users", "repositories"], (storage) => {
+        repos = storage.repositories;
+        users = storage.users;
+        if (repos && users) {
+            chrome.tabs.create({url: "report.html"});
+            chrome.runtime.onMessage.addListener(
+                function (request, sender, sendResponse) {
+                    if (request.Ready === 'True') {
+                        chrome.runtime.sendMessage({Token: document.getElementById("token-input").value});
+                    }
                 }
+            )
+        } else {
+            if (repos === null && users === null) {
+                document.getElementById("errorHandler").innerHTML = 'Fill list of repos and users in settings';
+            } else if (repos === null) {
+                document.getElementById("errorHandler").innerHTML = 'Fill list of repos in settings';
+            } else if (users === null) {
+                document.getElementById("errorHandler").innerHTML = 'Fill list of users in settings';
             }
-        )
-    } else {
-        if (repos === null && users === null) {
-            document.getElementById("errorHandler").innerHTML = 'Fill list of repos and users in settings';
-        } else if (repos === null) {
-            document.getElementById("errorHandler").innerHTML = 'Fill list of repos in settings';
-        } else if (users === null) {
-            document.getElementById("errorHandler").innerHTML = 'Fill list of users in settings';
         }
-    }
+    })
 });
 
 document.getElementById("token-gen-btn").addEventListener("click", () => {

@@ -38,6 +38,13 @@ const queryGetPullRequests = ['{\
 
 function getListRepos() {
     const reposStorage = JSON.parse(localStorage.getItem('repositories'));
+    
+    return new Promise((resolve, reject) => {
+        chrome.storage.local.get()
+    }
+
+    );
+    
     let listRepos = [];
     for (const repo of reposStorage) {
         listRepos.push(repo['link']);
