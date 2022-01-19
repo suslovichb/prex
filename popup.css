@@ -1,0 +1,32 @@
+body {
+    background-color: #f0f8ff;
+}
+
+.btn {
+    background-color: #000000;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 8px;
+    margin-top: 4px;
+    margin-bottom: 6px;
+    width: 100%;
+}
+
+#main-container {
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 200px;
+}
+
+#token-input {
+    border-radius: 5px;
+    width: 100%;
+}
+
+.outer {
+    width: 100%;
+}
+

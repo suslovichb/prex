@@ -1,0 +1,24 @@
+{
+    "name": "Prex",
+    "description": "Extension for pull requests monitoring",
+    "version": "0.1.0",
+    "manifest_version": 3,
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": {
+            "16": "./images/prex_icon_16.png",
+            "48": "./images/prex_icon_48.png",
+            "128": "./images/prex_icon_128.png"
+        }
+    },
+    "icons": {
+        "16": "./images/prex_icon_16.png",
+        "48": "./images/prex_icon_48.png",
+        "128": "./images/prex_icon_128.png"
+    },
+    "permissions": ["storage", "activeTab", "scripting"],
+    "host_permissions": [
+        "https://github.com/*",
+        "https://*.github.com/*"
+    ]
+}
