@@ -1,7 +1,7 @@
 $(document).ready(function () {
     let accessToken = localStorage.getItem('Token');
     localStorage.removeItem('Token');
-    document.querySelector('.preloader').style.display = 'flex';
+    loadData();
     try {
         const pullRequests = getPullRequests(accessToken);
         generateTable(pullRequests.sort(compare));
@@ -15,6 +15,7 @@ $(document).ready(function () {
     }
 });
 
+
 function compare(a, b) {
     if (a.updatedAt < b.updatedAt) {
         return -1;
@@ -27,16 +28,19 @@ function compare(a, b) {
 
 let repositories = [];
 let userQueries = [];
-chrome.storage.local.get(["users", "repositories"], (storage) => {
-    const repositoryList = JSON.parse(storage.repositories);
-    const usersList = JSON.parse(storage.users);
+
+function loadData() {
+    const selectedTeam = JSON.parse(localStorage.getItem('selectedTeam'));
+    localStorage.removeItem('selectedTeam');
+    const repositoryList = selectedTeam.repositories;
+    const usersList = selectedTeam.users;
     for (const user in usersList) {
         userQueries.push("author:" + usersList[user]['github'] + " ");
     }
     for (const repository in repositoryList) {
         repositories.push(repositoryList[repository]['path']);
     }
-});
+}
 
 const queryGetPullRequests = ['{\
   search(query: "is:pr ', ' state:open", type: ISSUE, first: 100) {\
@@ -118,8 +122,8 @@ function generateTable(data) {
 
     table += "</tbody></table>";
 
-    document.querySelector('.preloader').style.display = 'none';
     document.getElementById("reportTable").innerHTML = table;
+    document.querySelector('.preloader').style.display = 'none';
 }
 
 
