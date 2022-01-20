@@ -2,16 +2,13 @@ document.getElementById("settings-btn").addEventListener("click", () => {
     chrome.tabs.create({url: "settings.html"})
 });
 document.getElementById("report-btn").addEventListener("click", () => {
-    chrome.storage.local.get(["users", "repositories"], (storage) => {
-        const repositories = storage.repositories;
-        const users = storage.users;
-        if (repositories && users) {
-            localStorage.setItem('Token', document.getElementById("token-input").value);
-            chrome.tabs.create({url: "report.html"});
-        } else {
-            document.getElementById("errorHandler").innerHTML = 'Fill list of repositories and users in settings';
-        }
-    })
+    chrome.storage.local.get(["teams"], (storage) => {
+        const teams = JSON.parse(storage.teams);
+        const selectedTeam = document.getElementById("team-select").value;
+        localStorage.setItem('Token', document.getElementById("token-input").value);
+        localStorage.setItem('selectedTeam', JSON.stringify(teams[selectedTeam]));
+        chrome.tabs.create({url: "report.html"});
+    });
 });
 
 document.getElementById("token-gen-btn").addEventListener("click", () => {
@@ -23,8 +20,20 @@ document.getElementById("tokens-btn").addEventListener("click", () => {
 });
 
 $(document).ready(function () {
-    let accessToken = localStorage.getItem('accessToken');
-    if (accessToken) {
-        document.getElementById("token-input").hidden = true;
-    }
+    chrome.storage.local.get(["teams"], (storage) => {
+        try {
+            let teams = JSON.parse(storage.teams);
+            let select = document.getElementById('team-select');
+
+            for (let team in teams) {
+                let opt = document.createElement('option');
+                opt.value = team;
+                opt.innerHTML = teams[team]['name'];
+                select.appendChild(opt);
+            }
+        } catch (e) {
+            document.getElementById("errorHandler").innerHTML = 'Create team in settings';
+            document.getElementById("report-btn").hidden = true;
+        }
+    });
 });
