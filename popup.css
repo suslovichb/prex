@@ -20,7 +20,10 @@ body {
     align-items: stretch;
     width: 200px;
 }
-
+#team-select {
+    border-radius: 5px;
+    width: 100%;
+}
 #token-input {
     border-radius: 5px;
     width: 100%;
