@@ -9,6 +9,15 @@
     align-items: center;
 }
 
+td.status-field {
+    font-size: 18px;
+    vertical-align: middle;
+}
+
+td.status-field .badge {
+    padding: 8px;
+}
+
 .loader {
     border: 16px solid #f3f3f3; /* Light grey */
     border-top: 16px solid #3498db; /* Blue */

@@ -161,7 +161,7 @@ function generateTable(data) {
         table += '<tr class="table-light"><td>' + (index + 1) + "</td><td>" + item['title'] +
             "</td><td>" + item['author']['name'] + '</td><td><a href="' + item['url'] + '">' + item['url'] + '</a></td><td>'
             + Math.trunc((today - Date.parse(item['updatedAt'])) / (1000 * 3600 * 24)) + "</td><td>" + item['pendingDays'] +
-            '</td><td style="font-size: 20px; padding: 5px;"><span class="' + reviewStatesStyles[item['state']] + '">' + reviewStates[item['state']] + "</span></td></tr>";
+            '</td><td class="status-field""><span class="' + reviewStatesStyles[item['state']] + '">' + reviewStates[item['state']] + "</span></td></tr>";
     }
 
     table += "</tbody></table>";
