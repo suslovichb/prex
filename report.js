@@ -1,9 +1,37 @@
+function generatePendingDays(item) {
+    let startDate = 0;
+    let endDate = 0;
+    const comments = item['comments']['nodes']
+    for (const comment in comments) {
+        console.log(comments[comment]);
+        if (startDate === 0) {
+            if (users.includes(comments[comment]['author']['login'])) {
+                startDate = comments[comment]['createdAt'];
+            }
+        } else if (endDate === 0) {
+            if (!users.includes(comments[comment]['author']['login'])) {
+                endDate = comments[comment]['createdAt'];
+            }
+        }
+    }
+    if (startDate === 0) {
+        item['pendingDays'] = '-';
+    } else {
+        if (endDate === 0) {
+            item['pendingDays'] = Math.trunc((today - Date.parse(startDate)) / (1000 * 3600 * 24))
+        } else {
+            item['pendingDays'] = Math.trunc((Date.parse(endDate) - Date.parse(startDate)) / (1000 * 3600 * 24))
+        }
+    }
+}
+
 $(document).ready(function () {
     let accessToken = localStorage.getItem('Token');
     localStorage.removeItem('Token');
     loadData();
     try {
         const pullRequests = getPullRequests(accessToken);
+        pullRequests.forEach(generatePendingDays);
         generateTable(pullRequests.sort(compare));
     } catch (e) {
         document.querySelector('.preloader').style.display = 'none';
@@ -28,6 +56,8 @@ function compare(a, b) {
 
 let repositories = [];
 let userQueries = [];
+let users = [];
+const today = Date.now();
 
 function loadData() {
     const selectedTeam = JSON.parse(localStorage.getItem('selectedTeam'));
@@ -36,6 +66,7 @@ function loadData() {
     const usersList = selectedTeam.users;
     for (const user in usersList) {
         userQueries.push("author:" + usersList[user]['github'] + " ");
+        users.push(usersList[user]['github']);
     }
     for (const repository in repositoryList) {
         repositories.push(repositoryList[repository]['path']);
@@ -56,11 +87,19 @@ const queryGetPullRequests = ['{\
             }\
             }\
           updatedAt\
+          comments(first: 100) {\
+            nodes {\
+              bodyText\
+              createdAt\
+              author {\
+                login\
+              }\
+            }\
         }\
       }\
     }\
   }\
-}'];
+}}'];
 
 
 function getPullRequests(accessToken) {
@@ -104,9 +143,8 @@ function getPullRequests(accessToken) {
 
 
 function generateTable(data) {
-    const dataKeys = ['number', 'title', 'author', 'url', 'pending days'];
+    const dataKeys = ['number', 'title', 'author', 'url', 'pending days', 'pending days in review'];
     let table = "<table><thead><tr>";
-    const today = Date.now();
     for (const dataKey of dataKeys) {
         table += "<th>" + dataKey + "</th>";
     }
@@ -117,7 +155,8 @@ function generateTable(data) {
     function generateRow(item, index, array) {
         table += '<tr class="table-light"><td>' + (index + 1) + "</td><td>" + item['title'] +
             "</td><td>" + item['author']['name'] + '</td><td><a href="' + item['url'] + '">' + item['url'] + '</a></td><td>'
-            + Math.trunc((today - Date.parse(item['updatedAt'])) / (1000 * 3600 * 24)) + "</td></tr>";
+            + Math.trunc((today - Date.parse(item['updatedAt'])) / (1000 * 3600 * 24)) + "</td><td>" + item['pendingDays'] +
+            "</td></tr>";
     }
 
     table += "</tbody></table>";
