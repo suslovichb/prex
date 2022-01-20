@@ -58,7 +58,7 @@ function compare(a, b) {
 }
 
 const reviewStatesStyles = ['badge bg-danger', 'badge bg-warning', 'badge bg-success'];
-const reviewStates = ['In team review', 'In stakeholder review', 'Ready to merge'];
+const reviewStates = ['Under team review', 'Under stakeholder review', 'Ready to merge'];
 let repositories = [];
 let userQueries = [];
 let users = [];
@@ -161,7 +161,7 @@ function generateTable(data) {
         table += '<tr class="table-light"><td>' + (index + 1) + "</td><td>" + item['title'] +
             "</td><td>" + item['author']['name'] + '</td><td><a href="' + item['url'] + '">' + item['url'] + '</a></td><td>'
             + Math.trunc((today - Date.parse(item['updatedAt'])) / (1000 * 3600 * 24)) + "</td><td>" + item['pendingDays'] +
-            '</td><td><span class="' + reviewStatesStyles[item['state']] + '">' + reviewStates[item['state']] + "</span></td></tr>";
+            '</td><td style="font-size: 20px; padding: 5px;"><span class="' + reviewStatesStyles[item['state']] + '">' + reviewStates[item['state']] + "</span></td></tr>";
     }
 
     table += "</tbody></table>";
