@@ -58,7 +58,7 @@ function compare(a, b) {
 }
 
 const reviewStatesStyles = ['badge bg-danger', 'badge bg-warning', 'badge bg-success'];
-const reviewStates = ['Under team review', 'Under stakeholder review', 'Ready to merge'];
+const reviewStates = ['Under Team Review', 'Under Stakeholder Review', 'Ready to merge'];
 let repositories = [];
 let userQueries = [];
 let users = [];
@@ -148,7 +148,7 @@ function getPullRequests(accessToken) {
 
 
 function generateTable(data) {
-    const dataKeys = ['Number', 'Title', 'Author', 'URL', 'Pending days', 'Pending days in review', 'State'];
+    const dataKeys = ['#', 'Title', 'Author', 'URL', 'Pending days', 'Pending days in review', 'State'];
     let table = "<table><thead><tr>";
     for (const dataKey of dataKeys) {
         table += "<th>" + dataKey + "</th>";
@@ -169,7 +169,3 @@ function generateTable(data) {
     document.getElementById("reportTable").innerHTML = table;
     document.querySelector('.preloader').style.display = 'none';
 }
-
-
-
-
