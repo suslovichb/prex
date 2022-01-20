@@ -16,11 +16,14 @@ function generatePendingDays(item) {
     }
     if (startDate === 0) {
         item['pendingDays'] = '-';
+        item['state'] = 0;
     } else {
         if (endDate === 0) {
             item['pendingDays'] = Math.trunc((today - Date.parse(startDate)) / (1000 * 3600 * 24))
+            item['state'] = 1;
         } else {
             item['pendingDays'] = Math.trunc((Date.parse(endDate) - Date.parse(startDate)) / (1000 * 3600 * 24))
+            item['state'] = 2;
         }
     }
 }
@@ -54,6 +57,8 @@ function compare(a, b) {
     return 0;
 }
 
+const reviewStatesStyles = ['badge bg-danger', 'badge bg-warning', 'badge bg-success'];
+const reviewStates = ['In team review', 'In stakeholder review', 'Ready to merge'];
 let repositories = [];
 let userQueries = [];
 let users = [];
@@ -143,7 +148,7 @@ function getPullRequests(accessToken) {
 
 
 function generateTable(data) {
-    const dataKeys = ['number', 'title', 'author', 'url', 'pending days', 'pending days in review'];
+    const dataKeys = ['Number', 'Title', 'Author', 'URL', 'Pending days', 'Pending days in review', 'State'];
     let table = "<table><thead><tr>";
     for (const dataKey of dataKeys) {
         table += "<th>" + dataKey + "</th>";
@@ -156,7 +161,7 @@ function generateTable(data) {
         table += '<tr class="table-light"><td>' + (index + 1) + "</td><td>" + item['title'] +
             "</td><td>" + item['author']['name'] + '</td><td><a href="' + item['url'] + '">' + item['url'] + '</a></td><td>'
             + Math.trunc((today - Date.parse(item['updatedAt'])) / (1000 * 3600 * 24)) + "</td><td>" + item['pendingDays'] +
-            "</td></tr>";
+            '</td><td><span class="' + reviewStatesStyles[item['state']] + '">' + reviewStates[item['state']] + "</span></td></tr>";
     }
 
     table += "</tbody></table>";
