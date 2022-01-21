@@ -3,7 +3,6 @@ function generatePendingDays(item) {
     let endDate = 0;
     const comments = item['comments']['nodes']
     for (const comment in comments) {
-        console.log(comments[comment]);
         if (startDate === 0) {
             if (users.includes(comments[comment]['author']['login'])) {
                 if (comments[comment]['bodyText'] === 'LGTM') {
@@ -18,6 +17,7 @@ function generatePendingDays(item) {
             }
         }
     }
+
     if (startDate === 0) {
         item['pendingDays'] = '-';
         item['state'] = 0;
