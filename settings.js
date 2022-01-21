@@ -165,7 +165,7 @@ $( document ).ready(function() {
     const actionsCell = (itemId) => {
         return (`
             <td>
-                <button class="delete-btn" itemId="${itemId}">
+                <button class="delete-btn btn btn-secondary p-1" itemId="${itemId}">
                     Delete
                 </button>
             </td>
@@ -256,57 +256,58 @@ $( document ).ready(function() {
         return `
             <div class="team-card" style="margin:15px" teamId=${team.name}>
 
-                <div style="padding:5px;background-color:grey;display:flex;">
+                <div class="team-header d-flex p-2 bg-dark text-light rounded-top">
                     <div class="flex-grow-1 text-center">                
                         ${team.name}
                     </div>
                     <div>
-                        <button class="team-delete-btn" teamId="${team.name}">
+                        <button class="team-delete-btn btn btn-light py-0 px-2" teamId="${team.name}">
                             X
                         </button>
                     </div>
                 </div>
             
-                <div style="display:flex;flex-direction:row;align-items:stretch;">
-                    <div style="flex-grow:1;">
-                        <div style="padding:5px;background-color:lightgrey;text-align:center;">Users</div>
+                <div class="rounded-bottom" style="display:flex;flex-direction:row;align-items:stretch;background-color:#F0F0F0;">
+                    <div class="d-flex flex-column" style="flex-grow:1;">
+                        <div class="p-1 text-center border" style="background-color:lightgrey;">
+                            Users
+                        </div>
                         ${Array.isArray(team.users) ? team.users.map(user => teamUserRow(user, team.name)).join("") : ""}
-
-                        <form id="add-team-user-form" teamId="${team.name}">
-                            <div class="d-flex flex-row align-items-end">
-                                <div class="d-flex flex-column">
-                                    <label class="small" for="team-user-select">Repository</label>
-                                    <select type="select" id="team-user-select" class="rounded-3" name="github">
-                                        ${users ? [...users].map(user => `<option>${user.github}</option>`) : ""}
-                                    </select>
+                        <div class="mt-auto">
+                            <form id="add-team-user-form" class="w-100 p-2" teamId="${team.name}">
+                                <div class="d-flex flex-row align-items-end">
+                                    <div class="d-flex flex-column">
+                                        <label class="small" for="team-user-select">User</label>
+                                        <select type="select" id="team-user-select" class="rounded-3" name="github">
+                                            ${users ? [...users].map(user => `<option>${user.github}</option>`) : ""}
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="ms-1 btn btn-secondary py-0 px-2">Add</button>
                                 </div>
-
-                                <button type="submit" class="p-1 ms-1">Add</button>
-
-                            </div>
-                        </form>
-
+                            </form>
+                        </div>
+                    
                     </div>
                     
-                    <div style="flex-grow:1;">
-
-                        <div style="padding:5px;background-color:lightgrey;text-align:center;">Repositories</div>
+                    <div class="d-flex flex-column" style="flex-grow:1;">
+                        <div class="p-1 text-center border" style="background-color:lightgrey;">
+                            Repositories
+                        </div>
+                        
                         ${Array.isArray(team.repositories) ? team.repositories.map(repo => teamRepositoryRow(repo, team.name)).join("") : ""}
-                        
-                        <form id="add-team-repo-form" teamId="${team.name}">
-                            <div class="d-flex flex-row align-items-end">
-                                <div class="d-flex flex-column">
-                                    <label class="small" for="team-repo-select">Repository</label>
-                                    <select type="select" id="team-repo-select" class="rounded-3" name="path">
-                                        ${repositories ? [...repositories].map(repo => `<option>${repo.path}</option>`) : ""}
-                                    </select>
+                        <div class="mt-auto">
+                            <form id="add-team-repo-form" class="w-100 p-2" teamId="${team.name}">
+                                <div class="d-flex flex-row align-items-end">
+                                    <div class="d-flex flex-column">
+                                        <label class="small" for="team-repo-select">Repository</label>
+                                        <select type="select" id="team-repo-select" class="rounded-3" name="path">
+                                            ${repositories ? [...repositories].map(repo => `<option>${repo.path}</option>`) : ""}
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="ms-1 btn btn-secondary py-0 px-2">Add</button>
                                 </div>
-
-                                <button type="submit" class="p-1 ms-1">Add</button>
-
-                            </div>
-                        </form>
-                        
+                            </form>
+                        </div>
                     </div>
 
                 </div>
@@ -317,12 +318,12 @@ $( document ).ready(function() {
 
     const teamUserRow = (user, teamId) => {
         return `
-            <div class="team-user-row d-flex" teamId="${teamId}">
+            <div class="team-user-row d-flex px-2" teamId="${teamId}">
                 <div class="flex-grow-1">
                     ${user.github}
                 </div>
                 <div>
-                    <button class="team-user-delete-btn" teamId="${teamId}" userId="${user.github}">
+                    <button class="team-user-delete-btn btn btn-danger py-0 px-1" teamId="${teamId}" userId="${user.github}">
                         X
                     </button>
                 </div>
@@ -333,12 +334,12 @@ $( document ).ready(function() {
 
     const teamRepositoryRow = (repository, teamId) => {
         return `
-            <div class="team-repo-row d-flex" teamId="${teamId}">
+            <div class="team-repo-row d-flex px-2" teamId="${teamId}">
                 <div class="flex-grow-1">
                     ${repository.path}
                 </div>
                 <div>
-                    <button class="team-repo-delete-btn" teamId="${teamId}" repoId="${repository.path}">
+                    <button class="team-repo-delete-btn btn btn-danger py-0 px-1" teamId="${teamId}" repoId="${repository.path}">
                         X
                     </button>
                 </div>
