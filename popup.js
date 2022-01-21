@@ -37,3 +37,26 @@ $(document).ready(function () {
         }
     });
 });
+
+
+
+const setElementData = (el, data) => {
+    el.$dataKey = data;
+}
+const getElementData = (el) => {
+  return el.$dataKey;
+}
+setElementData(document.getElementById('labelOpenedClosed'), {
+    report: 1,
+});
+
+document.getElementById("report-switch").addEventListener("click", () => {
+    let labelOpened = document.getElementById('labelOpenedClosed');
+    if (getElementData(labelOpened).report !== 1) {
+        setElementData(labelOpened,{report : 1});
+        labelOpened.innerText = 'Opened Pull Requests';
+    } else {
+        setElementData(labelOpened,{report : 0});
+        labelOpened.innerText = 'Closed Pull Requests';
+    }
+});

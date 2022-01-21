@@ -6,11 +6,15 @@ function generatePendingDays(item) {
         console.log(comments[comment]);
         if (startDate === 0) {
             if (users.includes(comments[comment]['author']['login'])) {
-                startDate = comments[comment]['createdAt'];
+                if (comments[comment]['bodyText'] === 'LGTM') {
+                    startDate = comments[comment]['createdAt'];
+                }
             }
         } else if (endDate === 0) {
             if (!users.includes(comments[comment]['author']['login'])) {
-                endDate = comments[comment]['createdAt'];
+                if (comments[comment]['bodyText'] === 'LGTM') {
+                    endDate = comments[comment]['createdAt'];
+                }
             }
         }
     }
