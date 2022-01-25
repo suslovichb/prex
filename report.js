@@ -108,11 +108,11 @@ let endDate = 0;
 let days = [];
 
 function loadData() {
-    const selectedTeam = readLocalStorage('selectedTeam');
-    reportType = readLocalStorage('reportType');
+    const selectedTeam = extractValueFromLocalStorage('selectedTeam');
+    reportType = extractValueFromLocalStorage('reportType');
     if (reportType === 0) {
-        startDate = readLocalStorage('startDate');
-        endDate = readLocalStorage('endDate');
+        startDate = extractValueFromLocalStorage('startDate');
+        endDate = extractValueFromLocalStorage('endDate');
     }
     const repositoryList = selectedTeam.repositories;
     const usersList = selectedTeam.users;
@@ -125,7 +125,7 @@ function loadData() {
     }
 }
 
-function readLocalStorage(key) {
+function extractValueFromLocalStorage(key) {
     const value = JSON.parse(localStorage.getItem(key));
     localStorage.removeItem(key);
     return value;
