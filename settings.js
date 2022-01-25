@@ -4,12 +4,14 @@ $( document ).ready(function() {
     const userFields = ["github"];
     const repositoryFields = ["path"];
     
-    const usersContainerId = "users-table-container"
-    const repositoriesContainerId = "repo-table-container"
-    const tableClasses = ["table", "table-hover"]
-    const defaultCellValue = "-"
+    const usersContainerId = "users-table-container";
+    const repositoriesContainerId = "repo-table-container";
+    const tableClasses = ["table", "table-hover"];
+    const defaultCellValue = "-";
 
-    const teamsContainerId = "teams-container"
+    const teamsContainerId = "teams-container";
+
+    const githubNamePattern = "[a-z\\d](?:[a-z\\d]|-(?=[a-z\\d])){0,38}";
 
     let users = new Set();
     let repositories = new Set();
@@ -75,9 +77,28 @@ $( document ).ready(function() {
         }).catch((err) => {console.log(err)});
     }
 
+
+    const validateGithubUsername = (username) => {
+        pattern = "^" + githubNamePattern + "$";
+        let re = new RegExp(pattern, "i");
+        return re.test(username);
+    }
+
+
     $("#add-user-form").submit(function(event) {
         event.preventDefault();
+        
+        let errorsList = $(this).find(".form-errors-list");
         let values = $(this).serializeArray().reduce((o,kv) => ({...o, [kv.name]: kv.value}), {});
+
+        errorsList.html("");
+        errorsList.addClass("visually-hidden");
+
+        if (!validateGithubUsername(values.github)) {
+            errorsList.removeClass("visually-hidden");
+            errorsList.append("<li>Incorrect username</li>");
+            return;
+        }
         addUser(values);
         $(this).trigger("reset");
         $(this).find("input:text:visible:first").focus();
@@ -111,9 +132,27 @@ $( document ).ready(function() {
     }
 
 
+    const validateRepoPath = (path) => {
+        pattern = "^" + githubNamePattern + "\\/" + githubNamePattern + "$";
+        let re = new RegExp(pattern, "i");
+        return re.test(path);
+    }
+
+
     $("#add-repo-form").submit(function(event) {
         event.preventDefault();
+        
+        let errorsList = $(this).find(".form-errors-list");
         let values = $(this).serializeArray().reduce((o,kv) => ({...o, [kv.name]: kv.value}), {});
+
+        errorsList.html("");
+        errorsList.addClass("visually-hidden");
+
+        if (!validateRepoPath(values.path)) {
+            errorsList.removeClass("visually-hidden");
+            errorsList.append("<li>Incorrect path format</li>");
+            return;
+        }
         addRepository(values);
         $(this).trigger("reset");
         $(this).find("input:text:visible:first").focus();
