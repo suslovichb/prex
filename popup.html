@@ -3,7 +3,6 @@
 <head>
     <title>Prex</title>
     <link rel="stylesheet" href="popup.css">
-</head>
 <body>
 <div id="main-container">
     <div class="outer">
@@ -12,9 +11,33 @@
         </form>
     </div>
     <div class="outer">
-      <label for="team-select">Teams select</label>
-      <select class="form-select" id="team-select">
-      </select>
+        <label for="team-select">Teams select</label>
+        <select class="form-select" id="team-select">
+        </select>
+    </div>
+
+    <div class="wrapper">
+        <div class="switch_box box_1" id="report-switch">
+            <input type="checkbox" class="switch_1">
+        </div>
+    </div>
+
+    <div class="outer">
+        <label id="labelOpenedClosed">Opened Pull Requests</label>
+    </div>
+    <div class="outer">
+        <div>
+            <label for="start-date" class="input-date">Start date:</label>
+            <input type="date" id="start-date" name="trip-start"
+                   value="" class="input-date">
+
+        </div>
+        <div>
+            <label for="end-date" class="input-date">End date:</label>
+            <input type="date" id="end-date" name="trip-end"
+                   value="" class="input-date">
+
+        </div>
     </div>
     <div class="outer">
         <button type="button" id="report-btn" class="btn">
