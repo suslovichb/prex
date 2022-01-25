@@ -5,38 +5,73 @@ function generatePendingDays(item) {
     for (const comment in comments) {
         if (startDate === 0) {
             if (users.includes(comments[comment]['author']['login'])) {
-                if (comments[comment]['bodyText'] === 'LGTM') {
+                if (comments[comment]['bodyText'].includes('LGTM')) {
                     startDate = comments[comment]['createdAt'];
                 }
             }
         } else if (endDate === 0) {
             if (!users.includes(comments[comment]['author']['login'])) {
-                if (comments[comment]['bodyText'] === 'LGTM') {
+                if (comments[comment]['bodyText'].includes('LGTM')) {
                     endDate = comments[comment]['createdAt'];
                 }
             }
         }
     }
-
+    item['stakeholderReview'] = '-';
     if (startDate === 0) {
         item['pendingDays'] = '-';
         item['state'] = 0;
+        item['teamReview'] = '-';
     } else {
+        item['teamReview'] = startDate;
         if (endDate === 0) {
             item['pendingDays'] = Math.trunc((today - Date.parse(startDate)) / (1000 * 3600 * 24))
             item['state'] = 1;
         } else {
-            item['pendingDays'] = Math.trunc((Date.parse(endDate) - Date.parse(startDate)) / (1000 * 3600 * 24))
+            item['pendingDays'] = diffTwoDates(endDate, startDate);
             item['state'] = 2;
+            item['stakeholderReview'] = endDate;
         }
+    }
+    if (reportType === 1) {
+        item['daysFromLastUpdate'] = Math.trunc((today - Date.parse(item['updatedAt'])) / (1000 * 3600 * 24));
+        days.push([item['daysFromLastUpdate'], item['pendingDays']]);
+    } else {
+        item['teamReviewTime'] = item['teamReview'];
+        if (item['teamReviewTime'] !== '-') {
+            item['teamReviewTime'] = diffTwoDates(item['teamReviewTime'], item['createdAt']);
+        }
+        item['fullReviewTime'] = item['stakeholderReview'];
+        if (item['fullReviewTime'] !== '-') {
+            item['fullReviewTime'] = diffTwoDates(item['fullReviewTime'], item['createdAt']);
+        }
+        item['timeToMergeFromFirstLGTM'] = item['teamReview'];
+        if (item['timeToMergeFromFirstLGTM'] !== '-') {
+            item['timeToMergeFromFirstLGTM'] = diffTwoDates(item['mergedAt'], item['timeToMergeFromFirstLGTM']);
+        }
+        item['timeToMerge'] = item['stakeholderReview'];
+        if (item['timeToMerge'] !== '-') {
+            item['timeToMerge'] = diffTwoDates(item['mergedAt'], item['timeToMerge']);
+        }
+        item['lifetime'] = diffTwoDates(item['mergedAt'], item['createdAt']);
+        days.push([item['lifetime'], item['pendingDays'], item['teamReviewTime'], item['fullReviewTime'], item['timeToMergeFromFirstLGTM'], item['timeToMerge']]);
     }
 }
 
+function validateDates(startDate, endDate) {
+    if (startDate > endDate) {
+        [startDate, endDate] = [endDate, startDate];
+    }
+    endDate = (new Date(Date.parse(endDate) + (24 * 60 * 60 * 1000))).toISOString().split('T')[0];
+    return [startDate, endDate];
+}
+
 $(document).ready(function () {
-    let accessToken = localStorage.getItem('Token');
-    localStorage.removeItem('Token');
-    loadData();
     try {
+        let accessToken = localStorage.getItem('token');
+        localStorage.removeItem('token');
+        loadData();
+        [startDate, endDate] = validateDates(startDate, endDate);
         const pullRequests = getPullRequests(accessToken);
         pullRequests.forEach(generatePendingDays);
         generateTable(pullRequests.sort(compare));
@@ -66,11 +101,19 @@ const reviewStates = ['Under Team Review', 'Under Stakeholder Review', 'Ready to
 let repositories = [];
 let userQueries = [];
 let users = [];
+let reportType = 1;
 const today = Date.now();
+let startDate = 0;
+let endDate = 0;
+let days = [];
 
 function loadData() {
-    const selectedTeam = JSON.parse(localStorage.getItem('selectedTeam'));
-    localStorage.removeItem('selectedTeam');
+    const selectedTeam = extractValueFromLocalStorage('selectedTeam');
+    reportType = extractValueFromLocalStorage('reportType');
+    if (reportType === 0) {
+        startDate = extractValueFromLocalStorage('startDate');
+        endDate = extractValueFromLocalStorage('endDate');
+    }
     const repositoryList = selectedTeam.repositories;
     const usersList = selectedTeam.users;
     for (const user in usersList) {
@@ -82,8 +125,14 @@ function loadData() {
     }
 }
 
+function extractValueFromLocalStorage(key) {
+    const value = JSON.parse(localStorage.getItem(key));
+    localStorage.removeItem(key);
+    return value;
+}
+
 const queryGetPullRequests = ['{\
-  search(query: "is:pr ', ' state:open", type: ISSUE, first: 100) {\
+  search(query: "is:pr state:', ' ", type: ISSUE, first: 100) {\
     edges {\
       node {\
         ... on PullRequest {\
@@ -95,6 +144,8 @@ const queryGetPullRequests = ['{\
               name\
             }\
             }\
+          createdAt\
+          mergedAt\
           updatedAt\
           comments(first: 100) {\
             nodes {\
@@ -120,6 +171,13 @@ function getPullRequests(accessToken) {
             if (stop) {
                 break;
             }
+            let query;
+            if (reportType === 1) {
+                query = queryGetPullRequests[0] + "open repo:" + repo + " " + userQuery + queryGetPullRequests[1];
+            } else {
+                query = queryGetPullRequests[0] + "closed repo:" + repo + " " + userQuery + " merged:" + startDate +
+                    ".." + endDate + queryGetPullRequests[1];
+            }
             $.ajax({
                 type: "POST",
                 url: `https://api.github.com/graphql`,
@@ -128,7 +186,7 @@ function getPullRequests(accessToken) {
                     Authorization: "bearer " + accessToken
                 },
                 data: JSON.stringify({
-                    "query": queryGetPullRequests[0] + "repo:" + repo + " " + userQuery + queryGetPullRequests[1]
+                    "query": query
                 }),
                 async: false,
                 dataType: 'json',
@@ -150,9 +208,33 @@ function getPullRequests(accessToken) {
     return pullRequests;
 }
 
+function average(nums) {
+    if (nums.length === 0) {
+        return '-';
+    } else {
+        return nums.reduce((a, b) => (a + b)) / nums.length;
+    }
+}
+
+function getTableHead() {
+    let dataKeys = ['#', 'Title', 'Author', 'URL',];
+    if (reportType === 1) {
+        dataKeys.push('Last activity');
+        dataKeys.push('Pending days in review');
+        dataKeys.push('State');
+    } else {
+        dataKeys.push('Lifetime');
+        dataKeys.push('SRT');
+        dataKeys.push('TRT');
+        dataKeys.push('FRT');
+        dataKeys.push('FRT - MT');
+        dataKeys.push('SRT - MT');
+    }
+    return dataKeys;
+}
 
 function generateTable(data) {
-    const dataKeys = ['#', 'Title', 'Author', 'URL', 'Pending days', 'Pending days in review', 'State'];
+    const dataKeys = getTableHead();
     let table = "<table><thead><tr>";
     for (const dataKey of dataKeys) {
         table += "<th>" + dataKey + "</th>";
@@ -160,16 +242,66 @@ function generateTable(data) {
     table += "</tr></thead><tbody>";
 
     data.forEach(generateRow);
+    generateAVGRow();
 
-    function generateRow(item, index, array) {
-        table += '<tr class="table-light"><td>' + (index + 1) + "</td><td>" + item['title'] +
-            "</td><td>" + item['author']['name'] + '</td><td><a href="' + item['url'] + '">' + item['url'] + '</a></td><td>'
-            + Math.trunc((today - Date.parse(item['updatedAt'])) / (1000 * 3600 * 24)) + "</td><td>" + item['pendingDays'] +
-            '</td><td class="status-field""><span class="' + reviewStatesStyles[item['state']] + '">' + reviewStates[item['state']] + "</span></td></tr>";
+    function generateAVGRow() {
+        if (reportType === 1) {
+            let daysFromLastUpdateAVG = [];
+            let pendingDaysAVG = [];
+            let AVGList = [daysFromLastUpdateAVG, pendingDaysAVG];
+            for (let days_i = 0; days_i < days.length; days_i++) {
+                for (let data_i in days[days_i]) {
+                    if (days[days_i][data_i] !== '-') {
+                        AVGList[data_i].push(days[days_i][data_i]);
+                    }
+                }
+            }
+            table += '<tr class="table-info"><td></td><td>AVG</td><td></td><td></td><td>'
+                + average(daysFromLastUpdateAVG) + "</td><td>" + average(pendingDaysAVG) +
+                '</td><td></td></tr>';
+        } else {
+            let lifetimeAVG = [];
+            let pendingDaysAVG = [];
+            let teamReviewTimeAVG = [];
+            let fullReviewTimeAVG = [];
+            let timeToMergeFromFirstLGTMAVG = [];
+            let timeToMergeAVG = [];
+            let AVGList = [lifetimeAVG, pendingDaysAVG, teamReviewTimeAVG, fullReviewTimeAVG, timeToMergeFromFirstLGTMAVG, timeToMergeAVG];
+            for (let days_i = 0; days_i < days.length; days_i++) {
+                for (let data_i in days[days_i]) {
+                    if (days[days_i][data_i] !== '-') {
+                        AVGList[data_i].push(days[days_i][data_i]);
+                    }
+                }
+            }
+            table += '<tr class="table-info"><td></td><td>AVG</td><td></td><td></td><td>'
+                + average(lifetimeAVG) + "</td><td>"
+                + average(pendingDaysAVG) + "</td><td>" + average(teamReviewTimeAVG) + "</td><td>" + average(fullReviewTimeAVG) +
+                "</td><td>" + average(timeToMergeFromFirstLGTMAVG) + "</td><td>" + average(timeToMergeAVG) + "</td></tr>";
+        }
+    }
+
+
+    function generateRow(item, index) {
+        if (reportType === 1) {
+            table += '<tr class="table-light"><td>' + (index + 1) + "</td><td>" + item['title'] +
+                "</td><td>" + item['author']['name'] + '</td><td><a href="' + item['url'] + '">' + item['url'] + '</a></td><td>'
+                + item['daysFromLastUpdate'] + "</td><td>" + item['pendingDays'] +
+                '</td><td class="status-field""><span class="' + reviewStatesStyles[item['state']] + '">' + reviewStates[item['state']] + "</span></td></tr>";
+        } else {
+            table += '<tr class="table-light"><td>' + (index + 1) + "</td><td>" + item['title'] +
+                "</td><td>" + item['author']['name'] + '</td><td><a href="' + item['url'] + '">' + item['url'] + '</a></td><td>'
+                + item['lifetime'] + "</td><td>" + item['pendingDays'] + "</td><td>" + item['teamReviewTime'] + "</td><td>" + item['fullReviewTime'] +
+                "</td><td>" + item['timeToMergeFromFirstLGTM'] + "</td><td>" + item['timeToMerge'] + "</td></tr>";
+        }
     }
 
     table += "</tbody></table>";
 
     document.getElementById("reportTable").innerHTML = table;
     document.querySelector('.preloader').style.display = 'none';
+}
+
+function diffTwoDates(firstDate, secondDate) {
+    return Math.trunc((Date.parse(firstDate) - Date.parse(secondDate)) / (1000 * 3600 * 24));
 }
