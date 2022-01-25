@@ -5,13 +5,13 @@ function generatePendingDays(item) {
     for (const comment in comments) {
         if (startDate === 0) {
             if (users.includes(comments[comment]['author']['login'])) {
-                if (comments[comment]['bodyText'] === 'LGTM') {
+                if (comments[comment]['bodyText'].includes('LGTM')) {
                     startDate = comments[comment]['createdAt'];
                 }
             }
         } else if (endDate === 0) {
             if (!users.includes(comments[comment]['author']['login'])) {
-                if (comments[comment]['bodyText'] === 'LGTM') {
+                if (comments[comment]['bodyText'].includes('LGTM')) {
                     endDate = comments[comment]['createdAt'];
                 }
             }
@@ -32,6 +32,29 @@ function generatePendingDays(item) {
             item['state'] = 2;
             item['stakeholderReview'] = endDate;
         }
+    }
+    if (reportType === 1) {
+        item['daysFromLastUpdate'] = Math.trunc((today - Date.parse(item['updatedAt'])) / (1000 * 3600 * 24));
+        days.push([item['daysFromLastUpdate'], item['pendingDays']]);
+    } else {
+        item['teamReviewTime'] = item['teamReview'];
+        if (item['teamReviewTime'] !== '-') {
+            item['teamReviewTime'] = diffTwoDates(item['teamReviewTime'], item['createdAt']);
+        }
+        item['fullReviewTime'] = item['stakeholderReview'];
+        if (item['fullReviewTime'] !== '-') {
+            item['fullReviewTime'] = diffTwoDates(item['fullReviewTime'], item['createdAt']);
+        }
+        item['timeToMergeFromFirstLGTM'] = item['teamReview'];
+        if (item['timeToMergeFromFirstLGTM'] !== '-') {
+            item['timeToMergeFromFirstLGTM'] = diffTwoDates(item['mergedAt'], item['timeToMergeFromFirstLGTM']);
+        }
+        item['timeToMerge'] = item['stakeholderReview'];
+        if (item['timeToMerge'] !== '-') {
+            item['timeToMerge'] = diffTwoDates(item['mergedAt'], item['timeToMerge']);
+        }
+        item['lifetime'] = diffTwoDates(item['mergedAt'], item['createdAt']);
+        days.push([item['lifetime'], item['pendingDays'], item['teamReviewTime'], item['fullReviewTime'], item['timeToMergeFromFirstLGTM'], item['timeToMerge']]);
     }
 }
 
@@ -82,6 +105,7 @@ let reportType = 1;
 const today = Date.now();
 let startDate = 0;
 let endDate = 0;
+let days = [];
 
 function loadData() {
     const selectedTeam = readLocalStorage('selectedTeam');
@@ -151,8 +175,8 @@ function getPullRequests(accessToken) {
             if (reportType === 1) {
                 query = queryGetPullRequests[0] + "open repo:" + repo + " " + userQuery + queryGetPullRequests[1];
             } else {
-                query = queryGetPullRequests[0] + "closed repo:" + repo + " " + userQuery + " created:>" + startDate +
-                    " merged:<" + endDate + queryGetPullRequests[1];
+                query = queryGetPullRequests[0] + "closed repo:" + repo + " " + userQuery + " merged:" + startDate +
+                    ".." + endDate + queryGetPullRequests[1];
             }
             $.ajax({
                 type: "POST",
@@ -192,8 +216,8 @@ function average(nums) {
     }
 }
 
-function generateTable(data) {
-    const dataKeys = ['#', 'Title', 'Author', 'URL',];
+function getTableHead() {
+    let dataKeys = ['#', 'Title', 'Author', 'URL',];
     if (reportType === 1) {
         dataKeys.push('Last activity');
         dataKeys.push('Pending days in review');
@@ -206,13 +230,17 @@ function generateTable(data) {
         dataKeys.push('FRT - MT');
         dataKeys.push('SRT - MT');
     }
+    return dataKeys;
+}
+
+function generateTable(data) {
+    const dataKeys = getTableHead();
     let table = "<table><thead><tr>";
     for (const dataKey of dataKeys) {
         table += "<th>" + dataKey + "</th>";
     }
     table += "</tr></thead><tbody>";
 
-    let days = [];
     data.forEach(generateRow);
     generateAVGRow();
 
@@ -254,37 +282,17 @@ function generateTable(data) {
     }
 
 
-    function generateRow(item, index, array) {
+    function generateRow(item, index) {
         if (reportType === 1) {
-            const daysFromLastUpdate = Math.trunc((today - Date.parse(item['updatedAt'])) / (1000 * 3600 * 24));
             table += '<tr class="table-light"><td>' + (index + 1) + "</td><td>" + item['title'] +
                 "</td><td>" + item['author']['name'] + '</td><td><a href="' + item['url'] + '">' + item['url'] + '</a></td><td>'
-                + daysFromLastUpdate + "</td><td>" + item['pendingDays'] +
+                + item['daysFromLastUpdate'] + "</td><td>" + item['pendingDays'] +
                 '</td><td class="status-field""><span class="' + reviewStatesStyles[item['state']] + '">' + reviewStates[item['state']] + "</span></td></tr>";
-            days.push([daysFromLastUpdate, item['pendingDays']]);
         } else {
-            let teamReviewTime = item['teamReview'];
-            if (teamReviewTime !== '-') {
-                teamReviewTime = diffTwoDates(teamReviewTime, item['createdAt']);
-            }
-            let fullReviewTime = item['stakeholderReview'];
-            if (fullReviewTime !== '-') {
-                fullReviewTime = diffTwoDates(fullReviewTime, item['createdAt']);
-            }
-            let timeToMergeFromFirstLGTM = item['teamReview'];
-            if (timeToMergeFromFirstLGTM !== '-') {
-                timeToMergeFromFirstLGTM = diffTwoDates(item['mergedAt'], timeToMergeFromFirstLGTM);
-            }
-            let timeToMerge = item['stakeholderReview'];
-            if (timeToMerge !== '-') {
-                timeToMerge = diffTwoDates(item['mergedAt'], timeToMerge);
-            }
-            const lifetime = diffTwoDates(item['mergedAt'], item['createdAt']);
             table += '<tr class="table-light"><td>' + (index + 1) + "</td><td>" + item['title'] +
                 "</td><td>" + item['author']['name'] + '</td><td><a href="' + item['url'] + '">' + item['url'] + '</a></td><td>'
-                + lifetime + "</td><td>" + item['pendingDays'] + "</td><td>" + teamReviewTime + "</td><td>" + fullReviewTime +
-                "</td><td>" + timeToMergeFromFirstLGTM + "</td><td>" + timeToMerge + "</td></tr>";
-            days.push([lifetime, item['pendingDays'], teamReviewTime, fullReviewTime, timeToMergeFromFirstLGTM, timeToMerge]);
+                + item['lifetime'] + "</td><td>" + item['pendingDays'] + "</td><td>" + item['teamReviewTime'] + "</td><td>" + item['fullReviewTime'] +
+                "</td><td>" + item['timeToMergeFromFirstLGTM'] + "</td><td>" + item['timeToMerge'] + "</td></tr>";
         }
     }
 
