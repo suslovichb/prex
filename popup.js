@@ -19,7 +19,7 @@ document.getElementById("report-btn").addEventListener("click", () => {
 });
 
 document.getElementById("token-gen-btn").addEventListener("click", () => {
-    chrome.tabs.create({url: "https://github.com/settings/tokens/new"});
+    chrome.tabs.create({url: "https://github.com/settings/tokens/new?description=Prex%20Chrome%20extension&scopes=repo%2Cread%3Aorg%2Cread%3Auser"});
 });
 
 document.getElementById("tokens-btn").addEventListener("click", () => {
