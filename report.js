@@ -17,7 +17,7 @@ function generatePendingDays(item) {
             }
         }
     }
-    item['stakeholderReview'] = '-';
+    item['POReview'] = '-';
     if (startDate === 0) {
         item['pendingDays'] = '-';
         item['state'] = 0;
@@ -30,7 +30,7 @@ function generatePendingDays(item) {
         } else {
             item['pendingDays'] = diffTwoDates(endDate, startDate);
             item['state'] = 2;
-            item['stakeholderReview'] = endDate;
+            item['POReview'] = endDate;
         }
     }
     if (reportType === 1) {
@@ -38,23 +38,15 @@ function generatePendingDays(item) {
         days.push([item['daysFromLastUpdate'], item['pendingDays']]);
     } else {
         item['teamReviewTime'] = item['teamReview'];
-        if (item['teamReviewTime'] !== '-') {
+        if (item['teamReview'] !== '-') {
             item['teamReviewTime'] = diffTwoDates(item['teamReviewTime'], item['createdAt']);
         }
-        item['fullReviewTime'] = item['stakeholderReview'];
-        if (item['fullReviewTime'] !== '-') {
-            item['fullReviewTime'] = diffTwoDates(item['fullReviewTime'], item['createdAt']);
-        }
-        item['timeToMergeFromFirstLGTM'] = item['teamReview'];
-        if (item['timeToMergeFromFirstLGTM'] !== '-') {
-            item['timeToMergeFromFirstLGTM'] = diffTwoDates(item['mergedAt'], item['timeToMergeFromFirstLGTM']);
-        }
-        item['timeToMerge'] = item['stakeholderReview'];
-        if (item['timeToMerge'] !== '-') {
-            item['timeToMerge'] = diffTwoDates(item['mergedAt'], item['timeToMerge']);
+        item['fullReviewTime'] = item['POReview'];
+        if ((item['fullReviewTime'] !== '-') && (item['teamReview'] !== '-')) {
+            item['fullReviewTime'] = diffTwoDates(item['fullReviewTime'], item['teamReview']);
         }
         item['lifetime'] = diffTwoDates(item['mergedAt'], item['createdAt']);
-        days.push([item['lifetime'], item['pendingDays'], item['teamReviewTime'], item['fullReviewTime'], item['timeToMergeFromFirstLGTM'], item['timeToMerge']]);
+        days.push([item['lifetime'],  item['teamReviewTime'], item['fullReviewTime']]);
     }
 }
 
@@ -97,7 +89,7 @@ function compare(a, b) {
 }
 
 const reviewStatesStyles = ['badge bg-danger', 'badge bg-warning', 'badge bg-success'];
-const reviewStates = ['Under Team Review', 'Under Stakeholder Review', 'Ready to merge'];
+const reviewStates = ['Under Team Review', 'Under PO Review', 'Ready to merge'];
 let repositories = [];
 let userQueries = [];
 let users = [];
@@ -224,11 +216,8 @@ function getTableHead() {
         dataKeys.push('State');
     } else {
         dataKeys.push('Lifetime');
-        dataKeys.push('SRT');
-        dataKeys.push('TRT');
-        dataKeys.push('FRT');
-        dataKeys.push('FRT - MT');
-        dataKeys.push('SRT - MT');
+        dataKeys.push('Team Review Time');
+        dataKeys.push('PO Review Time');
     }
     return dataKeys;
 }
@@ -261,12 +250,9 @@ function generateTable(data) {
                 '</td><td></td></tr>';
         } else {
             let lifetimeAVG = [];
-            let pendingDaysAVG = [];
             let teamReviewTimeAVG = [];
             let fullReviewTimeAVG = [];
-            let timeToMergeFromFirstLGTMAVG = [];
-            let timeToMergeAVG = [];
-            let AVGList = [lifetimeAVG, pendingDaysAVG, teamReviewTimeAVG, fullReviewTimeAVG, timeToMergeFromFirstLGTMAVG, timeToMergeAVG];
+            let AVGList = [lifetimeAVG, teamReviewTimeAVG, fullReviewTimeAVG];
             for (let days_i = 0; days_i < days.length; days_i++) {
                 for (let data_i in days[days_i]) {
                     if (days[days_i][data_i] !== '-') {
@@ -275,9 +261,8 @@ function generateTable(data) {
                 }
             }
             table += '<tr class="table-info"><td></td><td>AVG</td><td></td><td></td><td>'
-                + average(lifetimeAVG) + "</td><td>"
-                + average(pendingDaysAVG) + "</td><td>" + average(teamReviewTimeAVG) + "</td><td>" + average(fullReviewTimeAVG) +
-                "</td><td>" + average(timeToMergeFromFirstLGTMAVG) + "</td><td>" + average(timeToMergeAVG) + "</td></tr>";
+                + average(lifetimeAVG) + "</td><td>" + average(teamReviewTimeAVG) + "</td><td>" +
+                average(fullReviewTimeAVG) + "</td></tr>";
         }
     }
 
@@ -291,8 +276,7 @@ function generateTable(data) {
         } else {
             table += '<tr class="table-light"><td>' + (index + 1) + "</td><td>" + item['title'] +
                 "</td><td>" + item['author']['name'] + '</td><td><a href="' + item['url'] + '">' + item['url'] + '</a></td><td>'
-                + item['lifetime'] + "</td><td>" + item['pendingDays'] + "</td><td>" + item['teamReviewTime'] + "</td><td>" + item['fullReviewTime'] +
-                "</td><td>" + item['timeToMergeFromFirstLGTM'] + "</td><td>" + item['timeToMerge'] + "</td></tr>";
+                + item['lifetime'] + "</td><td>" + item['teamReviewTime'] + "</td><td>" + item['fullReviewTime'] + "</td></tr>";
         }
     }
 
