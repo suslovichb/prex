@@ -17,7 +17,7 @@ function generatePendingDays(item) {
             }
         }
     }
-    item['stakeholderReview'] = '-';
+    item['POReview'] = '-';
     if (startDate === 0) {
         item['pendingDays'] = '-';
         item['state'] = 0;
@@ -30,7 +30,7 @@ function generatePendingDays(item) {
         } else {
             item['pendingDays'] = diffTwoDates(endDate, startDate);
             item['state'] = 2;
-            item['stakeholderReview'] = endDate;
+            item['POReview'] = endDate;
         }
     }
     if (reportType === 1) {
@@ -41,7 +41,7 @@ function generatePendingDays(item) {
         if (item['teamReview'] !== '-') {
             item['teamReviewTime'] = diffTwoDates(item['teamReviewTime'], item['createdAt']);
         }
-        item['fullReviewTime'] = item['stakeholderReview'];
+        item['fullReviewTime'] = item['POReview'];
         if ((item['fullReviewTime'] !== '-') && (item['teamReview'] !== '-')) {
             item['fullReviewTime'] = diffTwoDates(item['fullReviewTime'], item['teamReview']);
         }
@@ -89,7 +89,7 @@ function compare(a, b) {
 }
 
 const reviewStatesStyles = ['badge bg-danger', 'badge bg-warning', 'badge bg-success'];
-const reviewStates = ['Under Team Review', 'Under Stakeholder Review', 'Ready to merge'];
+const reviewStates = ['Under Team Review', 'Under PO Review', 'Ready to merge'];
 let repositories = [];
 let userQueries = [];
 let users = [];
