@@ -11,7 +11,7 @@ $( document ).ready(function() {
 
     const teamsContainerId = "teams-container";
 
-    const githubNamePattern = "[a-z\\d](?:[a-z\\d]|-(?=[a-z\\d])){0,38}";
+    const githubNamePattern = "[a-z0-9](?:[-_](?=[a-z0-9])|[a-z0-9]){0,38}(?<=[a-z0-9])";
 
     let users = new Set();
     let repositories = new Set();
