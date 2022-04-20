@@ -307,13 +307,13 @@ $( document ).ready(function() {
                 </div>
             
                 <div class="rounded-bottom" style="display:flex;flex-direction:row;align-items:stretch;background-color:#F0F0F0;">
-                    <div class="d-flex flex-column" style="flex-grow:1;">
+                    <div class="d-flex flex-column border-end" style="flex-grow:1;">
                         <div class="p-1 text-center border" style="background-color:lightgrey;">
                             Users
                         </div>
                         ${Array.isArray(team.users) ? team.users.map(user => teamUserRow(user, team.name)).join("") : ""}
                         <div class="mt-auto">
-                            <form id="add-team-user-form" class="w-100 p-2" teamId="${team.name}">
+                            <form id="add-team-user-form" class="w-100 p-2 border-top border-end" teamId="${team.name}">
                                 <div class="d-flex flex-row align-items-end">
                                     <div class="d-flex flex-column">
                                         <label class="small" for="team-user-select">User</label>
@@ -328,14 +328,14 @@ $( document ).ready(function() {
                     
                     </div>
                     
-                    <div class="d-flex flex-column" style="flex-grow:1;">
+                    <div class="d-flex flex-column border-start" style="flex-grow:1;">
                         <div class="p-1 text-center border" style="background-color:lightgrey;">
                             Repositories
                         </div>
                         
                         ${Array.isArray(team.repositories) ? team.repositories.map(repo => teamRepositoryRow(repo, team.name)).join("") : ""}
                         <div class="mt-auto">
-                            <form id="add-team-repo-form" class="w-100 p-2" teamId="${team.name}">
+                            <form id="add-team-repo-form" class="w-100 p-2 border-top border-start" teamId="${team.name}">
                                 <div class="d-flex flex-row align-items-end">
                                     <div class="d-flex flex-column">
                                         <label class="small" for="team-repo-select">Repository</label>
