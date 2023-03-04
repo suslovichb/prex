@@ -53,3 +53,27 @@ body {
     background-color: black;
     color: white;
 }
+
+.team-repo-delete-btn {
+    visibility: hidden;
+}
+
+.team-repo-row:hover .team-repo-delete-btn {
+    visibility: visible;
+}
+
+.team-user-delete-btn {
+    visibility: hidden;
+}
+
+.team-user-row:hover .team-user-delete-btn {
+    visibility: visible;
+}
+
+.team-delete-btn {
+    visibility: hidden;
+}
+
+.team-header:hover .team-delete-btn {
+    visibility: visible;
+}

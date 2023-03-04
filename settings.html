@@ -34,6 +34,13 @@
                                 Repositories
                             </button>
                         </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="teams-tab" data-bs-toggle="tab" 
+                                    data-bs-target="#teams" type="button" role="tab" 
+                                    aria-controls="teams" aria-selected="false">
+                                Teams
+                            </button>
+                        </li>
                     </ul>
                 </div>
                 <div class="tab-content flex-grow-1" id="sections-tabs-content">          
@@ -45,12 +52,10 @@
                                 <div class="d-flex flex-column m-2">
                                     <label class="small" for="user-github-input">GitHub username</label>
                                     <input type="text" id="user-github-input" class="rounded-3" name="github">
-                                </div>  
-                                <div class="d-flex flex-column m-2">
-                                    <label class="small" for="user-alias-input">Alias</label>
-                                    <input type="text" id="user-alias-input" class="rounded-3" name="alias">
                                 </div>
                             </div>
+                            <ul id="user-form-errors" class="form-errors-list text-danger visually-hidden">
+                            </ul>
                             <button type="submit" class="btn btn-secondary px-1 py-0 m-2">Add user</button>
                         </form>
                     </div>
@@ -64,7 +69,22 @@
                                     <input type="text" id="repo-path-input" class="rounded-3" name="path">
                                 </div>
                             </div>
+                            <ul id="user-form-errors" class="form-errors-list text-danger visually-hidden">
+                            </ul>
                             <button type="submit" class="btn btn-secondary px-1 py-0 m-2">Add repository</button>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="teams" role="tabpanel" aria-labelledby="teams-tab">                  
+                        <div id="teams-container" class="m-4">
+                        </div>
+                        <form id="add-team-form" class="my-2 mx-4 d-flex flex-column align-items-start">
+                            <div class="d-flex flex-row">
+                                <div class="d-flex flex-column m-2">
+                                    <label class="small" for="team-name-input">Name</label>
+                                    <input type="text" id="team-name-input" class="rounded-3" name="name">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-secondary px-1 py-0 m-2">Add team</button>
                         </form>
                     </div>
                 </div>
