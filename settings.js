@@ -99,6 +99,7 @@ $( document ).ready(function() {
             errorsList.append("<li>Incorrect username</li>");
             return;
         }
+        
         addUser(values);
         $(this).trigger("reset");
         $(this).find("input:text:visible:first").focus();
@@ -153,6 +154,7 @@ $( document ).ready(function() {
             errorsList.append("<li>Incorrect path format</li>");
             return;
         }
+
         addRepository(values);
         $(this).trigger("reset");
         $(this).find("input:text:visible:first").focus();
@@ -163,7 +165,7 @@ $( document ).ready(function() {
         let table = makeTable(columnNames, items);
         $("#" + htmlContainerId).html(table);
     }
-    
+
 
     const makeTable = (columnNames, items) => {
         return (`
@@ -472,8 +474,8 @@ $( document ).ready(function() {
         });
     }
 
-    main();
 
+    main();
 });
 
 
